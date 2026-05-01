@@ -1,0 +1,8 @@
+buildozer_env/
+.buildozer/
+__pycache__/
+*.pyc
+teas.db
+.venv/
+env/
+ui/
