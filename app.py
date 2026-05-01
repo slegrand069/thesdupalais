@@ -1,5 +1,12 @@
 import streamlit as st
-import sqlite3
+
+# 🔥 DOIT ÊTRE EN TOUT PREMIER
+st.set_page_config(
+    page_title="Thés du Palais",
+    page_icon="🍵",
+    layout="centered",
+    initial_sidebar_state="collapsed"
+)
 
 from pages.main import main_screen
 from pages.edit import edit_screen
@@ -34,19 +41,13 @@ def init_db(conn):
 
 
 # connexion
-conn = sqlite3.connect("teas.db", check_same_thread=False)
+conn = sqlite3.connect("teas.db")
 c = conn.cursor()
 
 # 🔥 IMPORTANT
 init_db(conn)
 
 # ---------------- APP ----------------
-st.set_page_config(
-    page_title="Thés du Palais",
-    page_icon="🍵",
-    layout="centered",  # 🔥 plus compact
-    initial_sidebar_state="collapsed"
-    )
 
 st.title("🍵 Thés du Palais")
 
