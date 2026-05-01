@@ -17,6 +17,10 @@ import sqlite3
 
 def init_db(conn):
     c = conn.cursor()
+    # Temporaire : on recrée la table à chaque lancement pour éviter les soucis de déploiement (ALTER TABLE pas supporté par SQLite)
+     # 🔥 force reset
+    c.execute("DROP TABLE IF EXISTS teas")
+    
     c.execute("""
     CREATE TABLE IF NOT EXISTS teas (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -28,7 +32,7 @@ def init_db(conn):
         smell_rating INTEGER DEFAULT 0,
         taste_rating INTEGER DEFAULT 0,
         temperature INTEGER DEFAULT 70,
-        duration INTEGER DEFAULT 3,
+        duration INTEGER DEFAULT 3, 
         container TEXT,
         keywords TEXT,
         technical TEXT,
