@@ -6,31 +6,39 @@ from pages.edit import edit_screen
 from pages.detail import detail_screen  
 
 # ---------------- DATABASE ----------------
+import sqlite3
+
+def init_db(conn):
+    c = conn.cursor()
+    c.execute("""
+    CREATE TABLE IF NOT EXISTS teas (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL,
+        origin TEXT,
+        color TEXT,
+        description TEXT,
+        aromas TEXT,
+        smell_rating INTEGER DEFAULT 0,
+        taste_rating INTEGER DEFAULT 0,
+        temperature INTEGER DEFAULT 70,
+        duration INTEGER DEFAULT 3,
+        container TEXT,
+        keywords TEXT,
+        technical TEXT,
+        personal_notes TEXT,
+        status TEXT DEFAULT 'Disponible',
+        badges TEXT
+    )
+    """)
+    conn.commit()
+
+
+# connexion
 conn = sqlite3.connect("teas.db", check_same_thread=False)
 c = conn.cursor()
 
-c.execute("""
-CREATE TABLE IF NOT EXISTS teas (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT NOT NULL,
-    origin TEXT,
-    color TEXT,
-    description TEXT,
-    aromas TEXT,
-    smell INTEGER DEFAULT 0,
-    taste INTEGER DEFAULT 0,
-    temp INTEGER DEFAULT 70,
-    duration INTEGER DEFAULT 3,
-    container TEXT,
-    keywords TEXT,
-    technical TEXT,
-    personal TEXT,
-    status TEXT DEFAULT 'Disponible',
-    badges TEXT
-    )
-""")
-
-conn.commit()
+# 🔥 IMPORTANT
+init_db(conn)
 
 # ---------------- APP ----------------
 st.set_page_config(
