@@ -17,9 +17,6 @@ import sqlite3
 
 def init_db(conn):
     c = conn.cursor()
-    # Temporaire : on recrée la table à chaque lancement pour éviter les soucis de déploiement (ALTER TABLE pas supporté par SQLite)
-     # 🔥 force reset
-    c.execute("DROP TABLE IF EXISTS teas")
     
     c.execute("""
     CREATE TABLE IF NOT EXISTS teas (
