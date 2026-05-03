@@ -1,146 +1,67 @@
-from db import get_connection
+from supabase import create_client
 
+url = "https://ptcsqnskkybxmnsdsdxg.supabase.co"
+#anon public
+key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB0Y3NxbnNra3lieG1uc2RzZHhnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc2Nzc4MzYsImV4cCI6MjA5MzI1MzgzNn0.jcwmddYOVL2DNNPCUEjb3c3l3RWUTLTzagtLDqbTpvw"
+
+supabase = create_client(url, key)
+
+
+# ---------------- ADD ----------------
 def add_tea(data):
-    conn = get_connection()
-    cursor = conn.cursor()
 
-    cursor.execute("""
-    INSERT INTO teas (
-        name, origin, color, description, aromas,
-        smell_rating, taste_rating, temperature, duration,
-        container, keywords, technical, personal_notes, status, badges
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    """, data)
-
-    conn.commit()
-    conn.close()
-
-
-def get_all_teas():
-    conn = get_connection()
-    cursor = conn.cursor()
-
-    cursor.execute("SELECT * FROM teas")
-    teas = cursor.fetchall()
-
-    conn.close()
-    return teas
+    supabase.table("teas").insert({
+        "name": data[0],
+        "origin": data[1],
+        "color": data[2],
+        "description": data[3],
+        "aromas": data[4],
+        "smell_rating": data[5],
+        "taste_rating": data[6],
+        "temperature": data[7],
+        "duration": data[8],
+        "container": data[9],
+        "keywords": data[10],
+        "technical": data[11],
+        "personal_notes": data[12],
+        "status": data[13],
+        "badges": data[14]
+    }).execute()
 
 
+# ---------------- GET ALL ----------------
+def get_teas():
+    response = supabase.table("teas").select("*").execute()
+    return response.data
+
+
+# ---------------- GET ONE ----------------
 def get_tea_by_id(tea_id):
-    conn = get_connection()
-    cursor = conn.cursor()
-
-    cursor.execute("SELECT * FROM teas WHERE id=?", (tea_id,))
-    tea = cursor.fetchone()
-
-    conn.close()
-    return tea
+    response = supabase.table("teas").select("*").eq("id", tea_id).execute()
+    return response.data[0] if response.data else None
 
 
-def delete_tea(tea_id):
-    conn = get_connection()
-    cursor = conn.cursor()
-
-    cursor.execute("DELETE FROM teas WHERE id=?", (tea_id,))
-    conn.commit()
-    conn.close()
-
+# ---------------- UPDATE ----------------
 def update_tea(tea_id, data):
-    conn = get_connection()
-    cursor = conn.cursor()
+    supabase.table("teas").update({
+        "name": data[0],
+        "origin": data[1],
+        "color": data[2],
+        "description": data[3],
+        "aromas": data[4],
+        "smell_rating": data[5],
+        "taste_rating": data[6],
+        "temperature": data[7],
+        "duration": data[8],
+        "container": data[9],
+        "keywords": data[10],
+        "technical": data[11],
+        "personal_notes": data[12],
+        "status": data[13],
+        "badges": data[14]
+    }).eq("id", tea_id).execute()
 
-    cursor.execute("""
-    UPDATE teas SET
-        name=?, origin=?, color=?, description=?, aromas=?,
-        smell_rating=?, taste_rating=?, temperature=?, duration=?,
-        container=?, keywords=?, technical=?, personal_notes=?, status=?, badges=?
-    WHERE id=?
-    """, data + (tea_id,))
 
-    conn.commit()
-    conn.close()
-
-import random
-
-def smart_random_tea_advanced(query=""):
-    teas = get_all_teas()
-
-    query = query.lower()
-
-    results = []
-
-    for tea in teas:
-        score = 0
-
-        name = str(tea[1]).lower()
-        origin = str(tea[2]).lower()
-        color = str(tea[3]).lower()
-        aromas = str(tea[5]).lower()
-        keywords = str(tea[11]).lower()
-        badges = str(tea[15]).lower()
-
-        taste = tea[7]
-        smell = tea[8]
-        temp = tea[10]
-
-        # --- MATCH TEXTE ---
-        if query in name:
-            score += 5
-        if query in keywords:
-            score += 4
-        if query in aromas:
-            score += 3
-        if query in color:
-            score += 3
-
-        # --- INTERPRÉTATION INTELLIGENTE ---
-
-        # doux
-        if "doux" in query:
-            if taste <= 4:
-                score += 4
-
-        # corsé / fort
-        if "corsé" in query or "fort" in query:
-            if taste >= 7:
-                score += 4
-
-        # aromatique
-        if "aromatique" in query or "parfumé" in query:
-            if smell >= 7:
-                score += 3
-
-        # léger
-        if "léger" in query:
-            if taste <= 3:
-                score += 3
-
-        # chaud
-        if "chaud" in query:
-            if temp >= 85:
-                score += 2
-
-        # frais
-        if "frais" in query:
-            if temp <= 75:
-                score += 2
-
-        # fruité
-        if "fruit" in query:
-            if "fruit" in keywords or "fruit" in aromas:
-                score += 5
-
-        if score > 0:
-            results.append((tea, score))
-
-    if not results:
-        return random.choice(teas) if teas else None
-
-    # tri par score
-    results.sort(key=lambda x: x[1], reverse=True)
-
-    # top résultats
-    best = [t[0] for t in results[:5]]
-
-    return random.choice(best)    
+# ---------------- DELETE ----------------
+def delete_tea(tea_id):
+    supabase.table("teas").delete().eq("id", tea_id).execute()

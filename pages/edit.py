@@ -8,8 +8,8 @@ def edit_screen(conn=None, c=None):
     tea_id = st.session_state.get("edit_id")
     tea = get_tea_by_id(tea_id) if tea_id else None
 
-    def val(i, d=""):
-        return tea[i] if tea else d
+    def val(key, default=""):
+        return tea.get(key, default) if tea else default
 
     def to_list(v):
         return v.split(",") if v else []
@@ -18,9 +18,9 @@ def edit_screen(conn=None, c=None):
 
         st.subheader("Infos")
 
-        name = st.text_input("Nom", val(1))
-        origin = st.text_input("Origine", val(2))
-
+        name = st.text_input("Nom", val("name"))
+        origin = st.text_input("Origine", val("origin"))
+        
         color = st.selectbox(
             "Couleur",
             ["Noir","Vert","Blanc","Oolong","Pu'erh","Mixte"]

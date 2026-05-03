@@ -1,5 +1,5 @@
 import streamlit as st
-
+# Supabase THD3w!nt3Res26!
 # 🔥 DOIT ÊTRE EN TOUT PREMIER
 st.set_page_config(
     page_title="Thés du Palais",
@@ -13,40 +13,14 @@ from pages.edit import edit_screen
 from pages.detail import detail_screen  
 
 # ---------------- DATABASE ----------------
-import sqlite3
+from supabase import create_client
 
-def init_db(conn):
-    c = conn.cursor()
-    
-    c.execute("""
-    CREATE TABLE IF NOT EXISTS teas (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT NOT NULL,
-        origin TEXT,
-        color TEXT,
-        description TEXT,
-        aromas TEXT,
-        smell_rating INTEGER DEFAULT 0,
-        taste_rating INTEGER DEFAULT 0,
-        temperature INTEGER DEFAULT 70,
-        duration INTEGER DEFAULT 3, 
-        container TEXT,
-        keywords TEXT,
-        technical TEXT,
-        personal_notes TEXT,
-        status TEXT DEFAULT 'Disponible',
-        badges TEXT
-    )
-    """)
-    conn.commit()
+url = "https://ptcsqnskkybxmnsdsdxg.supabase.co"
+# anon public
+key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB0Y3NxbnNra3lieG1uc2RzZHhnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc2Nzc4MzYsImV4cCI6MjA5MzI1MzgzNn0.jcwmddYOVL2DNNPCUEjb3c3l3RWUTLTzagtLDqbTpvw"
 
 
-# connexion
-conn = sqlite3.connect("teas.db")
-c = conn.cursor()
-
-# 🔥 IMPORTANT
-init_db(conn)
+supabase = create_client(url, key)
 
 # ---------------- APP ----------------
 
@@ -121,10 +95,10 @@ if "edit_id" not in st.session_state:
 
 # ---------------- ROUTER ----------------
 if st.session_state.page == "main":
-    main_screen(conn, c)
+    main_screen()
 
 elif st.session_state.page == "edit":
-    edit_screen(conn, c)
+    edit_screen()
 
 elif st.session_state.page == "detail":
-    detail_screen(conn, c)
+    detail_screen()

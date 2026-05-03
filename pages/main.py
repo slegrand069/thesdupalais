@@ -1,17 +1,17 @@
+from models import get_teas
 import streamlit as st
 import random
 import textwrap
 
-def main_screen(conn, c):
+def main_screen():
 
     st.markdown("## 🍵 Mes thés")
 
-    # 🔎 Barre + mode
     col1, col2 = st.columns([3,1])
     search = col1.text_input("🔍 Rechercher")
     mode = col2.radio("", ["🔎", "🧠"], horizontal=True)
 
-    teas = c.execute("SELECT * FROM teas").fetchall()
+    teas = get_teas()
 
     # 🔎 LOGIQUE
     if search:
@@ -20,7 +20,7 @@ def main_screen(conn, c):
         else:
             teas = sorted(teas, key=lambda t: score_tea(t, search), reverse=True)
 
-    # 🎯 ACTIONS
+    # ACTIONS
     col1, col2 = st.columns(2)
 
     if col1.button("➕ Ajouter"):
@@ -31,7 +31,7 @@ def main_screen(conn, c):
     if col2.button("🎲 Surprise"):
         if teas:
             t = random.choice(teas)
-            st.session_state.selected_tea = t[0]
+            st.session_state.selected_tea = t["id"]
             st.session_state.page = "detail"
             st.rerun()
 
@@ -39,58 +39,44 @@ def main_screen(conn, c):
         st.info("Aucun thé")
         return
 
-    # 📋 CARDS
+    # CARDS
     for t in teas:
 
-        bg = get_color(t[3])
+        bg = get_color(t["color"])
 
-        badges = (t[15] or "").split(",")
-        badge_html = "".join([
-            f'<span class="badge">{b}</span>'
-            for b in badges if b
-        ])
+        badges = (t.get("badges") or "").split(",")
+        badge_html = "".join([f'<span class="badge">{b}</span>' for b in badges if b])
 
         html = textwrap.dedent(f"""
-<div class="card" style="background-color:{bg}">
-    <div style="display:flex; justify-content:space-between; align-items:center;">
-        <div>
-            <b>🍵 {t[1]}</b><br>
-            <small>{t[3]} • {t[2]}</small>
+        <div class="card" style="background-color:{bg}">
+            <b>🍵 {t["name"]}</b><br>
+            <small>{t["color"]} • {t["origin"]}</small>
+
+            <div style="margin-top:6px;">{badge_html}</div>
+
+            <div style="display:flex; gap:8px; margin-top:8px; font-size:12px;">
+                <span>⭐ {t["taste_rating"]}</span>
+                <span>🌡 {t["temperature"]}°C</span>
+                <span>⏳ {t["duration"]} min</span>
+            </div>
         </div>
-    </div>
-    <div style="margin-top:6px;">
-        {badge_html}
-    </div>
-    <div style="display:flex; gap:8px; margin-top:8px; font-size:12px;">
-        <span style="background:rgba(255,255,255,0.4); padding:4px 8px; border-radius:8px;">
-            ⭐ {t[7]}
-        </span>
-        <span style="background:rgba(255,255,255,0.4); padding:4px 8px; border-radius:8px;">
-            🌡 {t[8]}°C
-        </span>
-        <span style="background:rgba(255,255,255,0.4); padding:4px 8px; border-radius:8px;">
-            ⏳ {t[9]} min
-        </span>
-    </div>
-</div>
-""")
+        """)
 
         st.markdown(html, unsafe_allow_html=True)
 
         col1, col2 = st.columns(2)
 
-        if col1.button("Voir", key=f"v{t[0]}"):
-            st.session_state.selected_tea = t[0]
+        if col1.button("Voir", key=f"v{t['id']}"):
+            st.session_state.selected_tea = t["id"]
             st.session_state.page = "detail"
             st.rerun()
 
-        if col2.button("✏️", key=f"e{t[0]}"):
-            st.session_state.edit_id = t[0]
+        if col2.button("✏️", key=f"e{t['id']}"):
+            st.session_state.edit_id = t["id"]
             st.session_state.page = "edit"
             st.rerun()
 
         st.markdown("---")
-
 
 # 🔥 SCORE
 def score_tea(t, search):
