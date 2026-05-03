@@ -1,14 +1,14 @@
 import streamlit as st
 from models import add_tea, update_tea, get_tea_by_id
 
-def edit_screen(conn=None, c=None):
-    
-    user_id = st.session_state.user.id
-    
+def edit_screen():
+
     st.markdown("## ✏️ Édition")
 
     tea_id = st.session_state.get("edit_id")
-    tea = get_tea_by_id(tea_id, user_id) if tea_id else None
+    user_id = st.session_state.user.id
+
+    tea = get_tea_by_id(tea_id, user_id) if tea_id else {}
 
     def val(key, default=""):
         return tea.get(key, default) if tea else default
@@ -18,50 +18,63 @@ def edit_screen(conn=None, c=None):
 
     with st.form("form"):
 
+        # ---------------- INFOS ----------------
         st.subheader("Infos")
 
         name = st.text_input("Nom", val("name"))
         origin = st.text_input("Origine", val("origin"))
-        
+
+        colors = ["Noir","Vert","Blanc","Oolong","Pu'erh","Mixte"]
         color = st.selectbox(
             "Couleur",
-            ["Noir","Vert","Blanc","Oolong","Pu'erh","Mixte"]
+            colors,
+            index=colors.index(val("color")) if val("color") in colors else 0
         )
 
+        # ---------------- BADGES ----------------
         st.subheader("🏅 Identité")
 
         BADGES = ["Grand Cru","Thé d'exception","Import"]
         selected_badges = []
 
         cols = st.columns(3)
+        existing_badges = to_list(val("badges"))
+
         for i, b in enumerate(BADGES):
-            with cols[i]:
-                if st.checkbox(b, value=(b in to_list(val(15)))):
+            with cols[i % 3]:
+                if st.checkbox(b, value=(b in existing_badges)):
                     selected_badges.append(b)
 
+        # ---------------- DESCRIPTION ----------------
         st.subheader("Profil")
 
-        description = st.text_area("Description", val(4))
-        aromas = st.text_input("Arômes", val(5))
+        description = st.text_area("Description", val("description"))
+        aromas = st.text_input("Arômes", val("aromas"))
 
         col1, col2 = st.columns(2)
 
-        smell = col1.slider("Olfactif",0,10,int(val(6,5)))
-        taste = col1.slider("Gustatif",0,10,int(val(7,5)))
+        smell = col1.slider("Olfactif", 0, 10, int(val("smell_rating", 5)))
+        taste = col1.slider("Gustatif", 0, 10, int(val("taste_rating", 5)))
 
-        temp = col2.slider("Température",50,100,int(val(8,70)),step=5)
-        duration = col2.slider("Durée",0,15,int(val(9,3)))
-
-        moment = st.selectbox(
-            "Moment idéal",
-            ["Matin", "Après-midi", "Soir", "Toute la journée"]
-        )
+        temp = col2.slider("Température", 50, 100, int(val("temperature", 70)), step=5)
+        duration = col2.slider("Durée", 0, 15, int(val("duration", 3)))
 
         container = st.selectbox(
             "Contenant",
-            ["Boite","Sachet","Galette","Échantillon","Épuisé"]
+            ["Boite","Sachet","Galette","Échantillon","Épuisé"],
+            index=0
         )
 
+        # ---------------- MOMENT ----------------
+        moment_options = ["Matin", "Après-midi", "Soir", "Toute la journée"]
+
+        moment = st.selectbox(
+            "Moment idéal",
+            moment_options,
+            index=moment_options.index(val("moment")) if val("moment") in moment_options else 0
+        )
+
+        # ---------------- KEYWORDS ----------------
         st.subheader("🏷️ Profil aromatique")
 
         KEYWORDS = [
@@ -72,27 +85,39 @@ def edit_screen(conn=None, c=None):
         ]
 
         selected_kw = []
-        cols = st.columns(2)  # 🔥 mobile friendly
+        existing_kw = to_list(val("keywords"))
+
+        cols = st.columns(2)  # 🔥 mobile fix
 
         for i, kw in enumerate(KEYWORDS):
-            with cols[i % 3]:
-                if st.checkbox(kw, value=(kw in to_list(val(11)))):
+            with cols[i % 2]:
+                if st.checkbox(kw, value=(kw in existing_kw)):
                     selected_kw.append(kw)
 
-        technical = st.text_area("Technique", val(12))
-        personal = st.text_area("Notes perso", val(13))
+        # ---------------- NOTES ----------------
+        technical = st.text_area("Technique", val("technical"))
+        personal = st.text_area("Notes perso", val("personal_notes"))
+
+        status_options = ["Disponible","Épuisé","En test","Favori"]
 
         status = st.selectbox(
             "Statut",
-            ["Disponible","Épuisé","En test","Favori"]
+            status_options,
+            index=status_options.index(val("status")) if val("status") in status_options else 0
         )
 
+        # ---------------- ACTIONS ----------------
         col1, col2 = st.columns(2)
 
         submitted = col1.form_submit_button("💾 Enregistrer")
-
         cancel = col2.form_submit_button("⬅️ Annuler")
-    
+
+    # ---------------- LOGIC ----------------
+
+    if cancel:
+        st.session_state.page = "main"
+        st.rerun()
+
     if submitted:
 
         data = (
@@ -100,7 +125,8 @@ def edit_screen(conn=None, c=None):
             smell, taste, temp, duration, container,
             ",".join(selected_kw),
             technical, personal, status,
-            ",".join(selected_badges),moment
+            ",".join(selected_badges),
+            moment  # 🔥 NEW
         )
 
         if tea_id:
@@ -110,8 +136,4 @@ def edit_screen(conn=None, c=None):
 
         st.session_state.page = "main"
         st.session_state.edit_id = None
-        st.rerun()
-    
-    if cancel:  
-        st.session_state.page = "main"
         st.rerun()

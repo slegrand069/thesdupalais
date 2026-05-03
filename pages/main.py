@@ -2,7 +2,7 @@ from models import get_teas
 import streamlit as st
 import random
 import textwrap
-import datetime
+from datetime import datetime
 
 def main_screen():
 

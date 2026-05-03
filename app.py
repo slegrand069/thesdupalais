@@ -73,6 +73,7 @@ key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB0
 # ---------------- APP ----------------
 
 st.title("🍵 Thés du Palais")
+st.write("Gérez votre collection de thés, notez-les et retrouvez-les facilement !")
 
 st.markdown("""
 <style>
