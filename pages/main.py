@@ -48,19 +48,17 @@ def main_screen():
         badge_html = "".join([f'<span class="badge">{b}</span>' for b in badges if b])
 
         html = textwrap.dedent(f"""
-        <div class="card" style="background-color:{bg}">
-            <b>🍵 {t["name"]}</b><br>
-            <small>{t["color"]} • {t["origin"]}</small>
-
-            <div style="margin-top:6px;">{badge_html}</div>
-
-            <div style="display:flex; gap:8px; margin-top:8px; font-size:12px;">
-                <span>⭐ {t["taste_rating"]}</span>
-                <span>🌡 {t["temperature"]}°C</span>
-                <span>⏳ {t["duration"]} min</span>
-            </div>
-        </div>
-        """)
+<div class="card" style="background-color:{bg}">
+<b>🍵 {t["name"]}</b><br>
+<small>{t["color"]} • {t["origin"]}</small>
+<div style="margin-top:6px;">{badge_html}</div>
+<div style="display:flex; gap:8px; margin-top:8px; font-size:12px;">
+<span>⭐ {t["taste_rating"]}</span>
+<span>🌡 {t["temperature"]}°C</span>
+<span>⏳ {t["duration"]} min</span>
+</div>
+</div>
+""")
 
         st.markdown(html, unsafe_allow_html=True)
 
