@@ -2,26 +2,40 @@ from models import get_teas
 import streamlit as st
 import random
 import textwrap
+import datetime
 
 def main_screen():
 
+    user_id = st.session_state.user.id
+
     st.markdown("## 🍵 Mes thés")
 
-    col1, col2 = st.columns([3,1])
-    search = col1.text_input("🔍 Rechercher")
+    col1, col2 = st.columns([4,1])
+    search = col1.text_input("", placeholder="🔍 Rechercher")
     mode = col2.radio("", ["🔎", "🧠"], horizontal=True)
 
-    teas = get_teas()
+    teas = get_teas(user_id)
+
+    if mode == "🧠":
+        teas = sorted(
+            teas,
+            key=lambda t: score_tea(t, search or ""),
+            reverse=True
+        )
 
     # 🔎 LOGIQUE
     if search:
         if mode == "🔎":
             teas = [t for t in teas if match_loose(t, search)]
         else:
-            teas = sorted(teas, key=lambda t: score_tea(t, search), reverse=True)
+            teas = sorted(
+                teas,
+                key=lambda t: score_tea(t, search or ""),
+                reverse=True
+            )
 
     # ACTIONS
-    col1, col2 = st.columns(2)
+    col1, col2 = st.columns([1,1], gap="small")
 
     if col1.button("➕ Ajouter"):
         st.session_state.edit_id = None
@@ -30,7 +44,15 @@ def main_screen():
 
     if col2.button("🎲 Surprise"):
         if teas:
-            t = random.choice(teas)
+            scored = [(t, score_tea(t, "")) for t in teas]
+
+            # tri
+            scored.sort(key=lambda x: x[1], reverse=True)
+
+            # top 5 pondéré
+            top = [t for t, s in scored[:5]]
+
+            t = random.choice(top)            
             st.session_state.selected_tea = t["id"]
             st.session_state.page = "detail"
             st.rerun()
@@ -56,6 +78,7 @@ def main_screen():
 <span>⭐ {t["taste_rating"]}</span>
 <span>🌡 {t["temperature"]}°C</span>
 <span>⏳ {t["duration"]} min</span>
+<span>🌇 {t["moment"]}</span>
 </div>
 </div>
 """)
@@ -76,18 +99,50 @@ def main_screen():
 
         st.markdown("---")
 
+
+def get_current_moment():
+    hour = datetime.now().hour
+
+    if hour < 12:
+        return "Matin"
+    elif hour < 18:
+        return "Après-midi"
+    else:
+        return "Soir"
+    
 # 🔥 SCORE
 def score_tea(t, search):
+
     words = search.lower().split()
+    score = 0
 
-    def s(val, w):
-        return sum(w for word in words if val and word in val.lower())
+    def s(val, weight):
+        if not val:
+            return 0
+        return sum(weight for w in words if w in val.lower())
 
-    return (
-        s(t[1],5)+s(t[3],4)+s(t[2],3)+
-        s(t[11],3)+s(t[4],2)+s(t[13],1)+s(t[15],4)
-    )
+    # 🔎 recherche texte
+    score += s(t["name"], 5)
+    score += s(t["color"], 4)
+    score += s(t["origin"], 3)
+    score += s(t["keywords"], 3)
+    score += s(t["description"], 2)
+    score += s(t["personal_notes"], 1)
+    score += s(t.get("badges"), 4)
 
+    # ⭐ qualité
+    score += t.get("taste_rating", 0) * 0.5
+    score += t.get("smell_rating", 0) * 0.3
+
+    # ⏰ moment intelligent
+    current_moment = get_current_moment()
+
+    if t.get("moment") == current_moment:
+        score += 5  # 🔥 gros bonus
+    elif t.get("moment") == "Toute la journée":
+        score += 2
+
+    return score
 
 def match_loose(t, search):
     text = " ".join(map(str, [t[1],t[2],t[3],t[4],t[11],t[13]])).lower()
@@ -96,11 +151,11 @@ def match_loose(t, search):
 
 def get_color(color):
     return {
-        "Vert": "#E8F5E9",
-        "Noir": "#F5F5F5",
-        "Blanc": "#FAFAFA",
-        "Oolong": "#FFF3E0",
-        "Pu'erh": "#EFEBE9",
-        "Mixte": "#FCE4EC",
-        "Infusion": "#E3F2FD"
+        "Vert": "#DFF5E1",
+        "Noir": "#EAEAEA",
+        "Blanc": "#FFFFFF",
+        "Oolong": "#FFE8D6",
+        "Pu'erh": "#E8DED3",
+        "Mixte": "#FFE3EC",
+        "Infusion": "#E3F0FF"
     }.get(color, "#FFFFFF")

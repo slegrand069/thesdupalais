@@ -1,10 +1,13 @@
 from models import get_tea_by_id
+from models import delete_tea
 import streamlit as st
 
 def detail_screen():
 
+    user_id = st.session_state.user.id
+
     tea_id = st.session_state.get("selected_tea")
-    tea = get_tea_by_id(tea_id)
+    tea = get_tea_by_id(tea_id, user_id) if tea_id else None
 
     if not tea:
         st.error("Thé introuvable")
@@ -27,6 +30,9 @@ def detail_screen():
     st.markdown("### 🌡 Infusion")
     st.markdown(f"{tea['temperature']}°C • {tea['duration']} min")
 
+    st.markdown("### 🌇 Meilleur moment")
+    st.markdown(f"{tea['moment']}")
+
     st.markdown("### 📦 Infos")
     st.markdown(f"Contenant : {tea['container']}")
     st.markdown(f"Statut : {tea['status']}")
@@ -43,13 +49,18 @@ def detail_screen():
     st.markdown("### Notes perso")
     st.markdown(tea['personal_notes'] or "-")
 
-    col1, col2 = st.columns(2)
+    col1, col2, col3 = st.columns(3)
 
     if col1.button("✏️ Modifier"):
         st.session_state.edit_id = tea_id
         st.session_state.page = "edit"
         st.rerun()
 
-    if col2.button("⬅️ Retour"):
+    if col2.button("🗑️ Supprimer"):
+        delete_tea(tea_id, user_id)
+        st.session_state.page = "main"
+        st.rerun()
+
+    if col3.button("⬅️ Retour"):
         st.session_state.page = "main"
         st.rerun()

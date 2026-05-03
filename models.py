@@ -8,7 +8,7 @@ supabase = create_client(url, key)
 
 
 # ---------------- ADD ----------------
-def add_tea(data):
+def add_tea(data, user_id):
 
     supabase.table("teas").insert({
         "name": data[0],
@@ -25,24 +25,26 @@ def add_tea(data):
         "technical": data[11],
         "personal_notes": data[12],
         "status": data[13],
-        "badges": data[14]
+        "badges": data[14],
+        "user_id": user_id,
+        "moment": data[15]
     }).execute()
 
 
 # ---------------- GET ALL ----------------
-def get_teas():
-    response = supabase.table("teas").select("*").execute()
+def get_teas(user_id):
+    response = supabase.table("teas").select("*").eq("user_id", user_id).execute()
     return response.data
 
 
 # ---------------- GET ONE ----------------
-def get_tea_by_id(tea_id):
-    response = supabase.table("teas").select("*").eq("id", tea_id).execute()
+def get_tea_by_id(tea_id, user_id):
+    response = supabase.table("teas").select("*").eq("id", tea_id).eq("user_id", user_id).execute()
     return response.data[0] if response.data else None
 
 
 # ---------------- UPDATE ----------------
-def update_tea(tea_id, data):
+def update_tea(tea_id, data, user_id):
     supabase.table("teas").update({
         "name": data[0],
         "origin": data[1],
@@ -58,10 +60,11 @@ def update_tea(tea_id, data):
         "technical": data[11],
         "personal_notes": data[12],
         "status": data[13],
-        "badges": data[14]
-    }).eq("id", tea_id).execute()
+        "badges": data[14],
+        "moment": data[15]  
+    }).eq("id", tea_id).eq("user_id", user_id).execute()
 
 
 # ---------------- DELETE ----------------
-def delete_tea(tea_id):
-    supabase.table("teas").delete().eq("id", tea_id).execute()
+def delete_tea(tea_id, user_id):
+    supabase.table("teas").delete().eq("id", tea_id).eq("user_id", user_id).execute()

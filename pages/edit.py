@@ -2,11 +2,13 @@ import streamlit as st
 from models import add_tea, update_tea, get_tea_by_id
 
 def edit_screen(conn=None, c=None):
-
+    
+    user_id = st.session_state.user.id
+    
     st.markdown("## ✏️ Édition")
 
     tea_id = st.session_state.get("edit_id")
-    tea = get_tea_by_id(tea_id) if tea_id else None
+    tea = get_tea_by_id(tea_id, user_id) if tea_id else None
 
     def val(key, default=""):
         return tea.get(key, default) if tea else default
@@ -50,6 +52,11 @@ def edit_screen(conn=None, c=None):
         temp = col2.slider("Température",50,100,int(val(8,70)),step=5)
         duration = col2.slider("Durée",0,15,int(val(9,3)))
 
+        moment = st.selectbox(
+            "Moment idéal",
+            ["Matin", "Après-midi", "Soir", "Toute la journée"]
+        )
+
         container = st.selectbox(
             "Contenant",
             ["Boite","Sachet","Galette","Échantillon","Épuisé"]
@@ -65,7 +72,7 @@ def edit_screen(conn=None, c=None):
         ]
 
         selected_kw = []
-        cols = st.columns(3)
+        cols = st.columns(2)  # 🔥 mobile friendly
 
         for i, kw in enumerate(KEYWORDS):
             with cols[i % 3]:
@@ -80,8 +87,12 @@ def edit_screen(conn=None, c=None):
             ["Disponible","Épuisé","En test","Favori"]
         )
 
-        submitted = st.form_submit_button("💾 Enregistrer")
+        col1, col2 = st.columns(2)
 
+        submitted = col1.form_submit_button("💾 Enregistrer")
+
+        cancel = col2.form_submit_button("⬅️ Annuler")
+    
     if submitted:
 
         data = (
@@ -89,14 +100,18 @@ def edit_screen(conn=None, c=None):
             smell, taste, temp, duration, container,
             ",".join(selected_kw),
             technical, personal, status,
-            ",".join(selected_badges)
+            ",".join(selected_badges),moment
         )
 
         if tea_id:
-            update_tea(tea_id, data)
+            update_tea(tea_id, data, user_id)
         else:
-            add_tea(data)
+            add_tea(data, user_id)
 
         st.session_state.page = "main"
         st.session_state.edit_id = None
+        st.rerun()
+    
+    if cancel:  
+        st.session_state.page = "main"
         st.rerun()
