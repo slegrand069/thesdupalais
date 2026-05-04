@@ -57,8 +57,8 @@ def edit_screen():
         taste = col1.slider("Gustatif", 0, 10, int(val("taste_rating", 5)))
 
         temp = col2.slider("Température", 50, 100, int(val("temperature", 70)), step=5)
-        duration = col2.slider("Durée", 0, 15, int(val("duration", 3)))
-
+        duration = col2.slider("Durée", 0, 10, int(val("duration", 3)))
+ 
         container = st.selectbox(
             "Contenant",
             ["Boite","Sachet","Galette","Échantillon","Épuisé"],

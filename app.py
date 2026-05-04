@@ -1,4 +1,5 @@
 import streamlit as st
+import streamlit_js_eval
 # Supabase THD3w!nt3Res26!
 # 🔥 DOIT ÊTRE EN TOUT PREMIER
 st.set_page_config(
@@ -13,14 +14,18 @@ from pages.edit import edit_screen
 from pages.detail import detail_screen  
 from models import supabase
 
-if "session" in st.session_state and st.session_state.session:
-    try:
-        supabase.auth.set_session(
-            st.session_state.session.access_token,
-            st.session_state.session.refresh_token
-        )
-    except:
-        pass
+if st.session_data and "session" not in st.session_state:
+        import json
+        s = json.loads(st.session_data)
+
+        try:
+            supabase.auth.set_session(s["access_token"], s["refresh_token"])
+            user = supabase.auth.get_user()
+
+            st.session_state.user = user.user
+            st.session_state.session = s
+        except:
+            pass
 
 # ---------------- LOGIN ----------------
 def login_screen():
@@ -30,7 +35,8 @@ def login_screen():
     email = st.text_input("Email")
     password = st.text_input("Mot de passe", type="password")
 
-    col1, col2, col3 = st.columns(3)
+    col1, col2= st.columns(2, gap="small")
+    col3, _ = st.columns([1,4], gap="small")
 
     # 🔓 LOGIN
     if col1.button("🔓 Connexion"):
@@ -42,6 +48,14 @@ def login_screen():
         if res and res.user:
             st.session_state.user = res.user
             st.session_state.session = res.session
+            
+            # 🔥 stocker dans navigateur
+            streamlit_js_eval(js_expressions=f"""
+                localStorage.setItem("supabase_session", JSON.stringify({{
+                access_token: "{res.session.access_token}",
+                refresh_token: "{res.session.refresh_token}"
+                }}))
+            """)
             st.rerun()
         else:
             st.error("Email ou mot de passe incorrect")
@@ -61,6 +75,7 @@ def login_screen():
     # 🚪 LOGOUT
     if col3.button("🚪 Déconnexion"):
         supabase.auth.sign_out()
+        streamlit_js_eval(js_expressions="localStorage.removeItem('supabase_session')")
         st.session_state.clear()
         st.rerun()
         
