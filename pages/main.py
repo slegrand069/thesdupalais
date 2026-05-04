@@ -86,11 +86,12 @@ def main_screen():
 </div></div>
 """)
 
-        st.markdown(html, unsafe_allow_html=True)
+        col_main, col1, col2 = st.columns([8,1,1])
 
-        col1, col2 = st.columns([10,1])
+        with col_main:
+            st.markdown(html, unsafe_allow_html=True)
 
-        if col1.button("Voir", key=f"v{t['id']}"):
+        if col1.button("👁️", key=f"v{t['id']}"):
             st.session_state.selected_tea = t["id"]
             st.session_state.page = "detail"
             st.rerun()
@@ -99,7 +100,7 @@ def main_screen():
             st.session_state.edit_id = t["id"]
             st.session_state.page = "edit"
             st.rerun()
-
+            
         st.markdown("---")
 
 
