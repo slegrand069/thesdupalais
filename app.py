@@ -1,6 +1,13 @@
 import streamlit as st
-import streamlit_js_eval
+from streamlit_js_eval import streamlit_js_eval
+import json
+from pages.main import main_screen
+from pages.edit import edit_screen
+from pages.detail import detail_screen  
+from models import supabase
+
 # Supabase THD3w!nt3Res26!
+
 # 🔥 DOIT ÊTRE EN TOUT PREMIER
 st.set_page_config(
     page_title="Thés du Palais",
@@ -8,24 +15,10 @@ st.set_page_config(
     layout="centered",
     initial_sidebar_state="collapsed"
 )
-
-from pages.main import main_screen
-from pages.edit import edit_screen
-from pages.detail import detail_screen  
-from models import supabase
-
-if st.session_data and "session" not in st.session_state:
-        import json
-        s = json.loads(st.session_data)
-
-        try:
-            supabase.auth.set_session(s["access_token"], s["refresh_token"])
-            user = supabase.auth.get_user()
-
-            st.session_state.user = user.user
-            st.session_state.session = s
-        except:
-            pass
+session_data = streamlit_js_eval(
+    js_expressions="localStorage.getItem('supabase_session')",
+    key="get_session"
+)
 
 # ---------------- LOGIN ----------------
 def login_screen():
@@ -78,6 +71,28 @@ def login_screen():
         streamlit_js_eval(js_expressions="localStorage.removeItem('supabase_session')")
         st.session_state.clear()
         st.rerun()
+
+if session_data and session_data != "null" and "session" not in st.session_state:
+    try:
+        s = json.loads(session_data)
+
+        supabase.auth.set_session(
+            s["access_token"],
+            s["refresh_token"]
+        )
+
+        user = supabase.auth.get_user()
+
+        st.session_state.user = user.user
+        st.session_state.session = s
+
+    except Exception as e:
+        st.write("Session restore error:", e)
+
+if "user" not in st.session_state:
+    login_screen()
+    st.stop()
+
         
 # ---------------- DATABASE ----------------
 
