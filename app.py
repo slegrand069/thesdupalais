@@ -104,6 +104,14 @@ key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB0
 
 st.title("🍵 Thés du Palais")
 st.write("Gérez votre collection de thés, notez-les et retrouvez-les facilement !")
+col1, col2 = st.columns([6,1])
+
+with col2:
+    if st.button("🚪", help="Déconnexion"):
+        supabase.auth.sign_out()
+        streamlit_js_eval(js_expressions="localStorage.removeItem('supabase_session')")
+        st.session_state.clear()
+        st.rerun()
 
 st.markdown("""
 <style>

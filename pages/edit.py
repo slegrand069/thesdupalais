@@ -24,7 +24,7 @@ def edit_screen():
         name = st.text_input("Nom", val("name"))
         origin = st.text_input("Origine", val("origin"))
 
-        colors = ["Noir","Vert","Blanc","Oolong","Pu'erh","Mixte"]
+        colors = ["Noir","Vert","Blanc","Oolong","Pu'erh","Mixte", "Infusion"]
         color = st.selectbox(
             "Couleur",
             colors,
@@ -56,7 +56,7 @@ def edit_screen():
         smell = col1.slider("Olfactif", 0, 10, int(val("smell_rating", 5)))
         taste = col1.slider("Gustatif", 0, 10, int(val("taste_rating", 5)))
 
-        temp = col2.slider("Température", 50, 100, int(val("temperature", 70)), step=5)
+        temp = col2.slider("Température", 50, 100, int(val("temperature", 75)), step=5)
         duration = col2.slider("Durée", 0, 10, int(val("duration", 3)))
  
         container = st.selectbox(
@@ -81,7 +81,7 @@ def edit_screen():
             "Floral","Fruité","Boisé","Épicé","Terreux",
             "Herbacé","Mielleux","Céréales","Doux",
             "Amer","Fumé","Végétal","Minéral","Sucré",
-            "Léger","Corsé","Frais"
+            "Léger","Corsé","Frais","Acidulé","Rond","Puissant","Subtil"
         ]
 
         selected_kw = []
@@ -98,7 +98,7 @@ def edit_screen():
         technical = st.text_area("Technique", val("technical"))
         personal = st.text_area("Notes perso", val("personal_notes"))
 
-        status_options = ["Disponible","Épuisé","En test","Favori"]
+        status_options = ["Disponible","Épuisé","En test","A racheter","Favori"]
 
         status = st.selectbox(
             "Statut",

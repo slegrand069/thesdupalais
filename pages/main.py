@@ -70,7 +70,11 @@ def main_screen():
         badge_html = "".join([f'<span class="badge">{b}</span>' for b in badges if b])
 
         html = textwrap.dedent(f"""
-<div class="card" style="background-color:{bg}">
+<div class="card" style="background-color:{bg}; position:relative;">
+<div style="position:absolute; right:8px; top:8px; display:flex; gap:6px;">
+    <span onclick="window.parent.postMessage({{type:'view', id:{t["id"]}}}, '*')" style="cursor:pointer;">👁️</span>
+    <span onclick="window.parent.postMessage({{type:'edit', id:{t["id"]}}}, '*')" style="cursor:pointer;">✏️</span>
+</div>
 <b>🍵 {t["name"]}</b><br>
 <small>{t["color"]} • {t["origin"]}</small>
 <div style="margin-top:6px;">{badge_html}</div>
@@ -79,13 +83,12 @@ def main_screen():
 <span>🌡 {t["temperature"]}°C</span>
 <span>⏳ {t["duration"]} min</span>
 <span>🌇 {t["moment"]}</span>
-</div>
-</div>
+</div></div>
 """)
 
         st.markdown(html, unsafe_allow_html=True)
 
-        col1, col2 = st.columns(2)
+        col1, col2 = st.columns([10,1])
 
         if col1.button("Voir", key=f"v{t['id']}"):
             st.session_state.selected_tea = t["id"]
@@ -152,8 +155,8 @@ def match_loose(t, search):
 def get_color(color):
     return {
         "Vert": "#DFF5E1",
-        "Noir": "#EAEAEA",
-        "Blanc": "#FFFFFF",
+        "Noir": "#DADADA",
+        "Blanc": "#FBFBFB",
         "Oolong": "#FFE8D6",
         "Pu'erh": "#E8DED3",
         "Mixte": "#FFE3EC",
