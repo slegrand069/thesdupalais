@@ -69,29 +69,33 @@ def main_screen():
         badges = (t.get("badges") or "").split(",")
         badge_html = "".join([f'<span class="badge">{b}</span>' for b in badges if b])
 
-        st.markdown(f"""
-<div class="card" style="background-color:{bg}; cursor:pointer;">
-    <b>🍵 {t["name"]}</b><br>
-    <span style="font-size:12px;color:#555;">
-        {t["color"]} • {t["origin"]}
-    </span>
+        with st.container():
+
+    # CARD (visuel)
+            st.markdown(f"""
+<div class="card" style="background-color:{bg};">
+<b>🍵 {t["name"]}</b><br>
+<span style="font-size:12px;color:#555;">
+{t["color"]} • {t["origin"]}
+</span>
 <div style="margin:6px 0;">
-        {badge_html}
+{badge_html}
 </div>
 <div style="font-size:12px;">
-        ⭐ {t["taste_rating"]} •
-        🌡 {t["temperature"]}°C •
-        ⏳ {t["duration"]} min •
-        🌇 {t["moment"]}
+⭐ {t["taste_rating"]} •
+🌡 {t["temperature"]}°C •
+⏳ {t["duration"]} min •
+🌇 {t["moment"]}
 </div>
 </div>
-        """, unsafe_allow_html=True)
+            """, unsafe_allow_html=True)
 
-        if st.button(" ", key=f"card_{t['id']}", use_container_width=True):
-            st.session_state.selected_tea = t["id"]
-            st.session_state.page = "detail"
-            st.rerun()
-        
+    # ZONE CLIQUABLE (propre)
+            if st.button(" ", key=f"card_{t['id']}", use_container_width=True):
+                st.session_state.selected_tea = t["id"]
+                st.session_state.page = "detail"
+                st.rerun()
+
         st.markdown("---")
 
 
