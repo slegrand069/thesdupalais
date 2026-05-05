@@ -146,18 +146,13 @@ h3 {
 /* Boutons normaux */
 .stButton > button {
     text-align: left !important;
-    padding: 10px;
-    border-radius: 10px;
-    background-color: #C9fFf1;
-}
-
-/* Bouton invisible UNIQUEMENT pour card */
-button[key^="card_"] {
-    background: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
-    height: 0px;
-    padding: 0;
+    padding: 16px;
+    border-radius: 16px;
+    border: 1px solid rgba(0,0,0,0.05);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    background-color: #E8F5E9; /* ou dynamique si besoin */
+    font-size: 14px;
+    line-height: 1.6;
 }
             
             /* INPUTS */
