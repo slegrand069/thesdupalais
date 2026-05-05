@@ -49,18 +49,13 @@ def detail_screen():
     st.markdown("### Notes perso")
     st.markdown(tea['personal_notes'] or "-")
 
-    col1, col2, col3 = st.columns(3)
+    col1, col2 = st.columns(2)
 
     if col1.button("✏️ Modifier"):
         st.session_state.edit_id = tea_id
         st.session_state.page = "edit"
         st.rerun()
 
-    if col2.button("🗑️ Supprimer"):
-        delete_tea(tea_id, user_id)
-        st.session_state.page = "main"
-        st.rerun()
-
-    if col3.button("⬅️ Retour"):
+    if col2.button("⬅️ Retour"):
         st.session_state.page = "main"
         st.rerun()

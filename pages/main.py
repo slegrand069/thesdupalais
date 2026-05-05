@@ -69,38 +69,29 @@ def main_screen():
         badges = (t.get("badges") or "").split(",")
         badge_html = "".join([f'<span class="badge">{b}</span>' for b in badges if b])
 
-        html = textwrap.dedent(f"""
-<div class="card" style="background-color:{bg}; position:relative;">
-<div style="position:absolute; right:8px; top:8px; display:flex; gap:6px;">
-    <span onclick="window.parent.postMessage({{type:'view', id:{t["id"]}}}, '*')" style="cursor:pointer;">👁️</span>
-    <span onclick="window.parent.postMessage({{type:'edit', id:{t["id"]}}}, '*')" style="cursor:pointer;">✏️</span>
+        st.markdown(f"""
+<div class="card" style="background-color:{bg}; cursor:pointer;">
+    <b>🍵 {t["name"]}</b><br>
+    <span style="font-size:12px;color:#555;">
+        {t["color"]} • {t["origin"]}
+    </span>
+<div style="margin:6px 0;">
+        {badge_html}
 </div>
-<b>🍵 {t["name"]}</b><br>
-<small>{t["color"]} • {t["origin"]}</small>
-<div style="margin-top:6px;">{badge_html}</div>
-<div style="display:flex; gap:8px; margin-top:8px; font-size:12px;">
-<span>⭐ {t["taste_rating"]}</span>
-<span>🌡 {t["temperature"]}°C</span>
-<span>⏳ {t["duration"]} min</span>
-<span>🌇 {t["moment"]}</span>
-</div></div>
-""")
+<div style="font-size:12px;">
+        ⭐ {t["taste_rating"]} •
+        🌡 {t["temperature"]}°C •
+        ⏳ {t["duration"]} min •
+        🌇 {t["moment"]}
+</div>
+</div>
+        """, unsafe_allow_html=True)
 
-        col_main, col1, col2 = st.columns([8,1,1])
-
-        with col_main:
-            st.markdown(html, unsafe_allow_html=True)
-
-        if col1.button("👁️", key=f"v{t['id']}"):
+        if st.button(" ", key=f"card_{t['id']}", use_container_width=True):
             st.session_state.selected_tea = t["id"]
             st.session_state.page = "detail"
             st.rerun()
-
-        if col2.button("✏️", key=f"e{t['id']}"):
-            st.session_state.edit_id = t["id"]
-            st.session_state.page = "edit"
-            st.rerun()
-            
+        
         st.markdown("---")
 
 

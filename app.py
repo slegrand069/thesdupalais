@@ -142,15 +142,26 @@ h3 {
 }
             
 /* BOUTONS */
-.stButton>button {
-    background-color: #4CAF50;
-    color: white;
-    border-radius: 6px;
-    padding: 6px 12px;
-    font-size: 13px;
-}
 
-/* INPUTS */
+.stButton > button {
+    text-align: left !important;
+    padding: 14px;
+    border-radius: 14px;
+    border: 1px solid rgba(0,0,0,0.05);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+            
+div[data-testid="stButton"] button {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    margin: 0;
+    margin-top: -150px;
+    height: 150px;
+    padding: 0;
+}
+            
+            /* INPUTS */
 .stTextInput>div>div>input {
     font-size: 13px;
 }
