@@ -71,9 +71,8 @@ def main_screen():
 
     # CARD (visuel)
         card = f"""
-🍵 {t["name"]}
-{t["color"]} • {t["origin"]}
-🏅 {badges}
+🍵 {t["name"]}\n
+{t["color"]} • {t["origin"]} • 🏅 {badges} \n
 ⭐ {t["taste_rating"]} • 🌡 {t["temperature"]}°C • ⏳ {t["duration"]} min • 🌇 {t["moment"]}
         """
 
