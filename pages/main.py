@@ -3,6 +3,7 @@ import streamlit as st
 import random
 import textwrap
 from datetime import datetime
+from tea_card_component import tea_card
 
 def main_screen():
 
@@ -66,21 +67,29 @@ def main_screen():
 
         bg = get_color(t["color"])
 
-        badges = (t.get("badges") or "").split(",")
-        #badge_html = "".join([f'<span class="badge">{b}</span>' for b in badges if b])
+        badges = [b.strip() for b in (t.get("badges") or "").split(",") if b.strip()]
 
-    # CARD (visuel)
-        card = f"""
-🍵 {t["name"]}\n
-{t["color"]} • {t["origin"]} • 🏅 {badges} \n
-⭐ {t["taste_rating"]} • 🌡 {t["temperature"]}°C • ⏳ {t["duration"]} min • 🌇 {t["moment"]}
-        """
+        clicked = tea_card(
+            tea={
+            "id": t["id"],
+            "name": t["name"],
+            "color": t["color"],
+            "origin": t["origin"],
+            "rating": t["taste_rating"],
+            "temp": t["temperature"],
+            "duration": t["duration"],
+            "moment": t["moment"],
+            "badges": badges,
+            "bg": get_color(t["color"])
+            },
+        key=f"card_{t['id']}"
+        )
 
-        if st.button(card, key=f"card_{t['id']}", use_container_width=True):
-            st.session_state.selected_tea = t["id"]
+        if clicked:
+            st.session_state.selected_tea = clicked
             st.session_state.page = "detail"
-            st.rerun()
-
+            st.rerun()          
+            
         st.markdown("---")
 
 

@@ -1,0 +1,20 @@
+{
+	"folders": [
+		{
+			"path": "../tea_card_component/__pycache__"
+		},
+		{
+			"path": "../tea_card_component/frontend"
+		},
+		{
+			"path": "../tea_card_component/frontend/node_modules"
+		},
+		{
+			"path": "../tea_card_component/frontend/public"
+		},
+		{
+			"path": "../tea_card_component/frontend/src"
+		}
+	],
+	"settings": {}
+}
