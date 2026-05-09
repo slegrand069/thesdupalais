@@ -63,6 +63,8 @@ def main_screen():
     if not teas:
         st.info("Aucun thé")
         return
+    else:        
+        st.write(f"{len(teas)} thé(s)")
 
     # CARDS
     for t in teas:
@@ -70,12 +72,27 @@ def main_screen():
         bg = get_color(t["color"])
 
         badges = [b.strip() for b in (t.get("badges") or "").split(",") if b.strip()]
-        st.write("AVANT")
-
-        test = tea_card(key="test_unique")
-
-        st.write("APRES", test)
         
+        clicked = tea_card(
+            tea={
+            "id": t["id"],
+            "name": t["name"],
+            "color": t["color"],
+            "origin": t["origin"],
+            "rating": t["taste_rating"],
+            "temp": t["temperature"],
+            "duration": t["duration"],
+            "moment": t["moment"],
+            "badges": badges,
+            "bg": get_color(t["color"])
+            },
+        key=f"card_{t['id']}"
+        )
+
+        if clicked:
+            st.session_state.selected_tea = clicked
+            st.session_state.page = "detail"
+            st.rerun()          
             
         st.markdown("---")
 
