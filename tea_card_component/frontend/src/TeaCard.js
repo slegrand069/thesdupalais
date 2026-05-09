@@ -9,39 +9,54 @@ class TeaCard extends StreamlitComponentBase {
 
   handleClick = () => {
     const tea = this.props.args?.tea;
-    if (tea?.id) {
+
+    if (tea && tea.id) {
       Streamlit.setComponentValue(tea.id);
     }
   };
 
   render() {
-    const tea = this.props.args?.tea;
-    if (!tea) {
-      return <div>Loading...</div>;
-    }
+  const args = this.props.args || {};
+  const tea = args.tea || null;
 
+  // ⛑️ Sécurité : pas encore de données
+  if (!tea) {
     return (
-      <div
-        onClick={this.handleClick}
-        style={{
-          padding: "14px",
-          borderRadius: "16px",
-          background: tea.bg || "#eee",
-          boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
-          cursor: "pointer",
-          marginBottom: "10px"
-        }}
-      >
-        <div style={{ fontWeight: "bold" }}>
-          🍵 {tea.name}
-        </div>
+      <div style={{ padding: "10px", fontSize: "12px", color: "#888" }}>
+        Loading...
+      </div>
+    );
+  }
 
-        <div style={{ fontSize: "12px", color: "#555" }}>
-          {tea.color} • {tea.origin}
-        </div>
+  // ⛑️ Sécurité badges
+  const badges = Array.isArray(tea.badges) ? tea.badges : [];
 
+  return (
+    <div
+      onClick={this.handleClick}
+      style={{
+        padding: "14px",
+        borderRadius: "16px",
+        background: tea.bg || "#eee",
+        boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
+        cursor: "pointer",
+        marginBottom: "10px"
+      }}
+    >
+      {/* 🧾 Nom */}
+      <div style={{ fontWeight: "bold" }}>
+        🍵 {tea.name || "Sans nom"}
+      </div>
+
+      {/* 🌍 Origine */}
+      <div style={{ fontSize: "12px", color: "#555" }}>
+        {(tea.color || "-")} • {(tea.origin || "-")}
+      </div>
+
+      {/* 🏅 Badges */}
+      {badges.length > 0 && (
         <div style={{ marginTop: "6px" }}>
-          {(tea.badges || []).map((b, i) => (
+          {badges.map((b, i) => (
             <span
               key={i}
               style={{
@@ -56,13 +71,18 @@ class TeaCard extends StreamlitComponentBase {
             </span>
           ))}
         </div>
+      )}
 
-        <div style={{ marginTop: "6px", fontSize: "12px" }}>
-          ⭐ {tea.rating} • 🌡 {tea.temp}°C • ⏳ {tea.duration} min • 🌇 {tea.moment}
-        </div>
+      {/* 📊 Infos */}
+      <div style={{ marginTop: "6px", fontSize: "12px" }}>
+        ⭐ {tea.rating ?? 0} •
+        🌡 {tea.temp ?? 0}°C •
+        ⏳ {tea.duration ?? 0} min •
+        🌇 {tea.moment || "-"}
       </div>
-    );
-  }
+    </div>
+  );
+  } 
 }
 
 export default TeaCard;
