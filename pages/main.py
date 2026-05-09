@@ -61,10 +61,10 @@ def main_screen():
             st.rerun()
 
     if not teas:
-        st.info("Aucun thé")
+        st.markdown("Aucun thé")
         return
     else:        
-        st.write(f"{len(teas)} thé(s)")
+        st.markdown(f"{len(teas)} thé(s)")
 
     # CARDS
     for t in teas:
