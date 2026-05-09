@@ -16,7 +16,6 @@ class TeaCard extends StreamlitComponentBase {
 
   render() {
     const tea = this.props.args?.tea;
-
     if (!tea) {
       return <div>Loading...</div>;
     }
