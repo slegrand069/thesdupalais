@@ -16,6 +16,14 @@ class TeaCard extends StreamlitComponentBase {
   };
 
   render() {
+  return (
+    <div style={{ padding: 20 }}>
+      DEBUG: {JSON.stringify(this.props.args)}
+    </div>
+  );
+}
+
+oldrender() {
   const args = this.props.args || {};
   const tea = args.tea || null;
 
