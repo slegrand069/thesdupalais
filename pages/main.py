@@ -73,26 +73,28 @@ def main_screen():
 
         badges = [b.strip() for b in (t.get("badges") or "").split(",") if b.strip()]
         
-        clicked = tea_card(
-            tea={
-            "id": t["id"],
-            "name": t["name"],
-            "color": t["color"],
-            "origin": t["origin"],
-            "rating": t["taste_rating"],
-            "temp": t["temperature"],
-            "duration": t["duration"],
-            "moment": t["moment"],
-            "badges": badges,
-            "bg": get_color(t["color"])
-            },
-        key=f"card_{t['id']}"
-        )
+        st.write("TEST CARD", t["name"])
+        
+        #clicked = tea_card(
+        #    tea={
+        #    "id": t["id"],
+        #    "name": t["name"],
+        #    "color": t["color"],
+        #    "origin": t["origin"],
+        #    "rating": t["taste_rating"],
+        #    "temp": t["temperature"],
+        #    "duration": t["duration"],
+        #    "moment": t["moment"],
+        #    "badges": badges,
+        #    "bg": get_color(t["color"])
+        #    },
+        #key=f"card_{t['id']}"
+        #)
 
-        if clicked:
-            st.session_state.selected_tea = clicked
-            st.session_state.page = "detail"
-            st.rerun()          
+        #if clicked:
+        #    st.session_state.selected_tea = clicked
+        #    st.session_state.page = "detail"
+        #    st.rerun()          
             
         st.markdown("---")
 
