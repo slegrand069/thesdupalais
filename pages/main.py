@@ -1,3 +1,5 @@
+from modulefinder import test
+
 from models import get_teas
 import streamlit as st
 import random
@@ -68,27 +70,12 @@ def main_screen():
         bg = get_color(t["color"])
 
         badges = [b.strip() for b in (t.get("badges") or "").split(",") if b.strip()]
+        st.write("AVANT")
 
-        clicked = tea_card(
-            tea={
-            "id": t["id"],
-            "name": t["name"],
-            "color": t["color"],
-            "origin": t["origin"],
-            "rating": t["taste_rating"],
-            "temp": t["temperature"],
-            "duration": t["duration"],
-            "moment": t["moment"],
-            "badges": badges,
-            "bg": get_color(t["color"])
-            },
-        key=f"card_{t['id']}"
-        )
+        test = tea_card(key="test_unique")
 
-        if clicked:
-            st.session_state.selected_tea = clicked
-            st.session_state.page = "detail"
-            st.rerun()          
+        st.write("APRES", test)
+        
             
         st.markdown("---")
 
