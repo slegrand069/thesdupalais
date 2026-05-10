@@ -31,12 +31,8 @@ def main_screen():
         if mode == "🔎":
             teas = [t for t in teas if match_loose(t, search)]
         else:
-            teas = sorted(
-                teas,
-                key=lambda t: score_tea(t, search or ""),
-                reverse=True
-            )
-
+            teas = smart_filter(teas, search)
+    
     # ACTIONS
     col1, col2 = st.columns([1,1], gap="small")
 
@@ -61,10 +57,10 @@ def main_screen():
             st.rerun()
 
     if not teas:
-        st.markdown("Aucun thé")
+        st.info("Aucun thé trouvé. Essayez d'élargir votre recherche ou de changer de mode.")
         return
     else:        
-        st.markdown(f"{len(teas)} thé(s)")
+        st.info(f"{len(teas)} thé(s) trouvés");
 
     # CARDS
     for t in teas:
@@ -87,7 +83,7 @@ def main_screen():
                     "bg": bg
                 },
             
-            key=f"card_{t['id']}",
+            key=f"card_{t['id']}_{search}_{mode}"
             height=None
         );
         
@@ -142,9 +138,66 @@ def score_tea(t, search):
     return score
 
 def match_loose(t, search):
-    text = " ".join(map(str, [t[1],t[2],t[3],t[4],t[11],t[13]])).lower()
-    return any(w in text for w in search.lower().split())
+    if not search:
+        return True
 
+    words = search.lower().split()
+
+    text = " ".join([
+        str(t.get("name", "")),
+        str(t.get("color", "")),
+        str(t.get("origin", "")),
+        str(t.get("keywords", "")),
+        str(t.get("description", "")),
+        str(t.get("personal_notes", "")),
+        str(t.get("badges", ""))
+    ]).lower()
+
+    return any(w in text for w in words)
+
+def smart_filter(teas, search):
+    if not search:
+        return teas
+
+    words = search.lower().split()
+
+    def match(t):
+        score = 0
+
+        # 🎯 mots-clés directs
+        for w in words:
+            if w in str(t.get("color", "")).lower():
+                score += 5
+            if w in str(t.get("origin", "")).lower():
+                score += 5
+            if w in str(t.get("name", "")).lower():
+                score += 4
+            if w in str(t.get("badges", "")).lower():
+                score += 4
+
+        # ⭐ filtre rating
+        for w in words:
+            if w.isdigit():
+                if t.get("taste_rating", 0) >= int(w):
+                    score += 6
+
+        # 🌙 moment intelligent
+        for w in words:
+            if w in ["matin", "soir", "apres-midi"]:
+                if w in str(t.get("moment", "")).lower():
+                    score += 6
+
+        return score
+
+    scored = [(t, match(t)) for t in teas]
+
+    # 🔥 filtre : garder seulement pertinents
+    filtered = [t for t, s in scored if s > 0]
+
+    # tri
+    filtered.sort(key=lambda t: match(t), reverse=True)
+
+    return filtered
 
 def get_color(color):
     return {
