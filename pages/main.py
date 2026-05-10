@@ -87,7 +87,9 @@ def main_screen():
                 #"badges": badges,
                 #"bg": bg
             },
-        key=f"card_{t['id']}"
+        key=f"card_{t['id']}",
+        default=None,
+        height=120,
         )
         #clicked = tea_card(
         #    tea={

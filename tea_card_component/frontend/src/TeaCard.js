@@ -5,6 +5,7 @@ class TeaCard extends StreamlitComponentBase {
 
   componentDidMount() {
     Streamlit.setComponentReady();
+        Streamlit.setFrameHeight();
   }
 
   handleClick = () => {
