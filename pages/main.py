@@ -73,56 +73,28 @@ def main_screen():
 
         badges = [b.strip() for b in (t.get("badges") or "").split(",") if b.strip()]
         
-        #st.write("TEST CARD", t["name"])
         clicked = tea_card(
                 tea = {
                     "id": int(t["id"]),
-                    "name": str(t["name"])
+                    "name": str(t["name"]),
+                    "color": t["color"],
+                    "origin": t["origin"],
+                    "rating": t["taste_rating"],
+                    "temp": t["temperature"],
+                    "duration": t["duration"],
+                    "moment": t["moment"],
+                    "badges": badges,
+                    "bg": bg
                 },
             
             key=f"card_{t['id']}",
             height=100
         );
         
-        #clicked = tea_card(
-        #    tea={
-        #            "id": (int)(t["id"]),
-        #            "name": (str)(t["name"])
-                #"color": t["color"],
-                #"origin": t["origin"],
-                #"rating": t["taste_rating"],
-                #"temp": t["temperature"],
-                #"duration": t["duration"],
-                #"moment": t["moment"],
-                #"badges": badges,
-                #"bg": bg
-        #    },
-        #key=f"card_{t['id']}",
-        #default=None,
-        #height=120,
-        #)
-        #clicked = tea_card(
-        #    tea={
-        #    "id": t["id"],
-        #    "name": t["name"],
-        #    "color": t["color"],
-        #    "origin": t["origin"],
-        #    "rating": t["taste_rating"],
-        #    "temp": t["temperature"],
-        #    "duration": t["duration"],
-        #    "moment": t["moment"],
-        #    "badges": badges,
-        #    "bg": get_color(t["color"])
-        #    },
-        #key=f"card_{t['id']}"
-        #)
-
-        #if clicked:
-         #   st.session_state.selected_tea = clicked
-          #  st.session_state.page = "detail"
-           # st.rerun()          
-        if clicked is not None:
-            st.write("CLICKED:", clicked)
+        if clicked:
+           st.session_state.selected_tea = clicked
+           st.session_state.page = "detail"
+           st.rerun()          
 
         st.markdown("---")
 
