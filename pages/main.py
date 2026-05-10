@@ -107,11 +107,13 @@ def main_screen():
         #key=f"card_{t['id']}"
         #)
 
-        if clicked:
-            st.session_state.selected_tea = clicked
-            st.session_state.page = "detail"
-            st.rerun()          
-            
+        #if clicked:
+         #   st.session_state.selected_tea = clicked
+          #  st.session_state.page = "detail"
+           # st.rerun()          
+        if clicked is not None:
+            st.write("CLICKED:", clicked)
+
         st.markdown("---")
 
 
