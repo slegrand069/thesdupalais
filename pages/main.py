@@ -88,15 +88,13 @@ def main_screen():
                 },
             
             key=f"card_{t['id']}",
-            height=100
+            height=None
         );
         
         if clicked:
            st.session_state.selected_tea = clicked
            st.session_state.page = "detail"
            st.rerun()          
-
-        st.markdown("---")
 
 
 def get_current_moment():

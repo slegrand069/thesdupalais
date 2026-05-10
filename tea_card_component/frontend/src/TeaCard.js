@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect} from "react";
 import {
   Streamlit,
   withStreamlitConnection
@@ -9,6 +9,10 @@ function TeaCard(props) {
   console.log("PROPS:", props);
 
   const tea = props.args?.args?.tea || props.args?.tea;
+
+  useEffect(() => {
+    Streamlit.setFrameHeight();
+  });
 
   if (!tea) {
     return <div style={{ padding: 10 }}>NO DATA</div>;
@@ -38,7 +42,7 @@ return (
       background: tea.bg || "#f5f5f5",
       boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
       cursor: "pointer",
-      marginBottom: "12px",
+      marginBottom: "10px",
       transition: "all 0.15s ease",
       border: "1px solid rgba(0,0,0,0.05)"
     }}
