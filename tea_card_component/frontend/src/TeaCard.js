@@ -20,7 +20,9 @@ class TeaCard extends StreamlitComponentBase {
   };
 
   render() {
+    console.log("ARGS:", this.props.args);
     const tea = this.props.args?.tea;
+
 
     // 🔍 DEBUG VISUEL
     if (!tea) {
