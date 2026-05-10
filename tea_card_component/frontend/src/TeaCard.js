@@ -1,50 +1,41 @@
 import React from "react";
-import { StreamlitComponentBase, Streamlit } from "streamlit-component-lib";
+import {
+  Streamlit,
+  withStreamlitConnection
+} from "streamlit-component-lib";
 
-class TeaCard extends StreamlitComponentBase {
+// ✅ FONCTION (pas class)
+function TeaCard(props) {
+  const tea = props.args?.tea;
 
-  componentDidMount() {
-    Streamlit.setComponentReady();
-    Streamlit.setFrameHeight(); // 🔥 IMPORTANT
+  console.log("ARGS:", props.args);
+
+  if (!tea) {
+    return <div style={{ padding: 10 }}>NO DATA</div>;
   }
 
-  componentDidUpdate() {
-    Streamlit.setFrameHeight(); // 🔥 IMPORTANT
-  }
-
-  handleClick = () => {
-    const tea = this.props.args?.tea;
-    if (tea && tea.id) {
+  const handleClick = () => {
+    if (tea.id) {
       Streamlit.setComponentValue(tea.id);
     }
   };
 
-  render() {
-    console.log("ARGS:", this.props.args);
-    const tea = this.props.args?.tea;
-
-
-    // 🔍 DEBUG VISUEL
-    if (!tea) {
-      return <div style={{ padding: 10 }}>NO DATA</div>;
-    }
-
-    return (
-      <div
-        onClick={this.handleClick}
-        style={{
-          padding: "14px",
-          borderRadius: "16px",
-          background: "#eee",
-          boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
-          cursor: "pointer",
-          marginBottom: "10px"
-        }}
-      >
-        🍵 {tea.name}
-      </div>
-    );
-  }
+  return (
+    <div
+      onClick={handleClick}
+      style={{
+        padding: "14px",
+        borderRadius: "16px",
+        background: "#eee",
+        boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
+        cursor: "pointer",
+        marginBottom: "10px"
+      }}
+    >
+      🍵 {tea.name}
+    </div>
+  );
 }
 
-export default TeaCard;
+// 🔥 CRUCIAL
+export default withStreamlitConnection(TeaCard);
