@@ -8,7 +8,7 @@ import {
 function TeaCard(props) {
   console.log("PROPS:", props);
 
-  const tea = props.args?.args?.tea;
+  const tea = props.args?.args?.tea || props.args?.tea;
 
   if (!tea) {
     return <div style={{ padding: 10 }}>NO DATA</div>;
