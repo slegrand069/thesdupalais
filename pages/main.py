@@ -75,15 +75,15 @@ def main_screen():
         
         #st.write("TEST CARD", t["name"])
         clicked = tea_card(
-            args={
-                "tea": {
+                tea = {
                     "id": int(t["id"]),
                     "name": str(t["name"])
-                }
-            },
-        key=f"card_{t['id']}",
-        height=100
-        )
+                },
+            
+            key=f"card_{t['id']}",
+            height=100
+        );
+        
         #clicked = tea_card(
         #    tea={
         #            "id": (int)(t["id"]),
