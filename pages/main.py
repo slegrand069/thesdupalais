@@ -62,6 +62,8 @@ def main_screen():
     else:        
         st.info(f"{len(teas)} thé(s) trouvés");
 
+    safe_search = (search or "").replace(" ", "_")
+    
     # CARDS
     for t in teas:
 
@@ -83,9 +85,9 @@ def main_screen():
                     "bg": bg
                 },
             
-            key=f"card_{t['id']}_{search}_{mode}"
+            key=f"card_{t['id']}_{safe_search}_{mode}",
             height=None
-        );
+        )
         
         if clicked:
            st.session_state.selected_tea = clicked
