@@ -8,7 +8,7 @@ import {
 function TeaCard(props) {
   console.log("PROPS:", props);
 
-  const tea = props.args?.tea || props.tea;
+  const tea = props.args?.args?.tea;
 
   if (!tea) {
     return <div style={{ padding: 10 }}>NO DATA</div>;
@@ -21,11 +21,20 @@ function TeaCard(props) {
   };
 
   return (
-    <div onClick={handleClick} style={{ padding: 10 }}>
+    <div
+      onClick={handleClick}
+      style={{
+        padding: "14px",
+        borderRadius: "16px",
+        background: "#eee",
+        boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
+        cursor: "pointer",
+        marginBottom: "10px"
+      }}
+    >
       🍵 {tea.name}
     </div>
   );
 }
 
-// 🔥 CRUCIAL
 export default withStreamlitConnection(TeaCard);
