@@ -174,6 +174,53 @@ h3 {
     margin-right: 4px;
 }
 
+/* FORM SECTIONS */
+.form-card {
+    background: white;
+    padding: 18px;
+    border-radius: 18px;
+    margin-bottom: 16px;
+    border: 1px solid rgba(0,0,0,0.05);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+/* TITRES */
+.section-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 12px;
+}
+
+/* TEXT AREA */
+textarea {
+    border-radius: 12px !important;
+}
+
+/* INPUTS */
+.stTextInput input {
+    border-radius: 12px !important;
+}
+
+/* SELECT */
+.stSelectbox div[data-baseweb="select"] {
+    border-radius: 12px !important;
+}
+
+/* SLIDERS */
+.stSlider {
+    padding-top: 10px;
+}
+
+/* ACTION BAR */
+.action-bar {
+    position: sticky;
+    bottom: 0;
+    background: rgba(255,255,255,0.9);
+    backdrop-filter: blur(10px);
+    padding-top: 12px;
+    padding-bottom: 8px;
+}
+
 </style>
 """, unsafe_allow_html=True)
 
