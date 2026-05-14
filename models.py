@@ -68,3 +68,39 @@ def update_tea(tea_id, data, user_id):
 # ---------------- DELETE ----------------
 def delete_tea(tea_id, user_id):
     supabase.table("teas").delete().eq("id", tea_id).eq("user_id", user_id).execute()
+
+# ---------------- CONFIG VALUES ----------------
+def get_config_values(config_type):
+
+    response = (
+        supabase.table("app_config")
+        .select("*")
+        .eq("type", config_type)
+        .eq("active", True)
+        .order("sort_order")
+        .execute()
+    )
+
+    return response.data
+
+# ---------------- ADD CONFIG VALUE ----------------
+def add_config(type_, value):
+
+    return (
+        supabase.table("app_config")
+        .insert({
+            "type": type_,
+            "value": value
+        })
+        .execute()
+    )
+
+# ---------------- UPDATE CONFIG VALUE ----------------
+def update_config(id_, data):
+
+    return (
+        supabase.table("app_config")
+        .update(data)
+        .eq("id", id_)
+        .execute()
+    )

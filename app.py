@@ -1,6 +1,7 @@
 import streamlit as st
 from streamlit_js_eval import streamlit_js_eval
 import json
+from pages.admin import admin_screen
 from pages.main import main_screen
 from pages.edit import edit_screen
 from pages.detail import detail_screen  
@@ -221,6 +222,32 @@ textarea {
     padding-bottom: 8px;
 }
 
+
+/* Cache menu hamburger */
+#MainMenu {
+    visibility: hidden;
+}
+
+/* Cache footer Streamlit */
+footer {
+    visibility: hidden;
+}
+
+/* Cache header Streamlit */
+header {
+    visibility: hidden;
+}
+
+/* Cache sidebar collapse button */
+[data-testid="collapsedControl"] {
+    display: none;
+}
+
+/* Cache sidebar */
+section[data-testid="stSidebar"] {
+    display: none;
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -249,4 +276,5 @@ elif st.session_state.page == "edit":
 elif st.session_state.page == "detail":
     detail_screen()
 
-
+elif st.session_state.page == "admin":
+    admin_screen()

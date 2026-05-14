@@ -1,5 +1,5 @@
 import streamlit as st
-from models import add_tea, update_tea, get_tea_by_id
+from models import add_tea, update_tea, get_tea_by_id, get_config_values
 
 
 def edit_screen():
@@ -24,66 +24,33 @@ def edit_screen():
     # ---------------------------------------------------
 
     COLORS = [
-        "Noir",
-        "Vert",
-        "Blanc",
-        "Oolong",
-        "Pu'erh",
-        "Mixte",
-        "Infusion"
+        x["value"]
+        for x in get_config_values("color")
     ]
 
     BADGES = [
-        "Grand Cru",
-        "Thé d'exception",
-        "Import"
+        x["value"]
+        for x in get_config_values("badge")
     ]
 
     KEYWORDS = [
-        "Floral",
-        "Fruité",
-        "Boisé",
-        "Épicé",
-        "Terreux",
-        "Herbacé",
-        "Mielleux",
-        "Céréales",
-        "Doux",
-        "Amer",
-        "Fumé",
-        "Végétal",
-        "Minéral",
-        "Sucré",
-        "Léger",
-        "Corsé",
-        "Frais",
-        "Acidulé",
-        "Rond",
-        "Puissant",
-        "Subtil"
+        x["value"]  
+        for x in get_config_values("profilAromatique")
     ]
 
     MOMENTS = [
-        "Matin",
-        "Après-midi",
-        "Soir",
-        "Toute la journée"
+        x["value"]
+        for x in get_config_values("moment")
     ]
 
-    STATUS = [
-        "Disponible",
-        "Épuisé",
-        "En test",
-        "A racheter",
-        "Favori"
+    STATUS = [ 
+        x["value"]
+        for x in get_config_values("status")
     ]
 
     CONTAINERS = [
-        "Boite",
-        "Sachet",
-        "Galette",
-        "Échantillon",
-        "Épuisé"
+        x["value"]
+        for x in get_config_values("contenant")
     ]
 
     # ---------------------------------------------------

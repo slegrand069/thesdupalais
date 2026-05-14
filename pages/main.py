@@ -15,6 +15,11 @@ def main_screen():
 
     col1, col2 = st.columns([4,1])
     search = col1.text_input("", placeholder="🔍 Rechercher")
+    if search.strip().lower() == "/admin":
+
+        st.session_state.page = "admin"
+        st.rerun()
+
     mode = col2.radio("", ["🔎", "🧠"], horizontal=True)
 
     teas = get_teas(user_id)
@@ -299,6 +304,7 @@ def get_color(color):
         "Blanc": "#FBFBFB",
         "Oolong": "#FFE8D6",
         "Pu'erh": "#E8DED3",
+        "Pu'Erh": "#E8DED3",
         "Mixte": "#FFE3EC",
         "Infusion": "#E3F0FF"
     }.get(color, "#FFFFFF")
