@@ -1,5 +1,5 @@
 import streamlit as st
-from models import add_tea, update_tea, get_tea_by_id, get_config_values
+from models import add_tea, get_config_dict, update_tea, get_tea_by_id, get_config_values
 
 
 def edit_screen():
@@ -23,10 +23,7 @@ def edit_screen():
     # DATA
     # ---------------------------------------------------
 
-    COLORS = [
-        x["value"]
-        for x in get_config_values("color")
-    ]
+    COLORS = get_config_dict("color");
 
     BADGES = [
         x["value"]
@@ -80,14 +77,16 @@ def edit_screen():
             val("origin")
         )
 
+        color_names = list(COLORS.keys())
+
         color = st.selectbox(
             "Couleur",
-            COLORS,
-            index=COLORS.index(val("color"))
-            if val("color") in COLORS
+            color_names,
+            index=color_names.index(val("color"))
+            if val("color") in color_names
             else 0
         )
-
+            
         selected_badges = st.multiselect(
             "🏅 Badges",
             BADGES,

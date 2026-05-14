@@ -104,3 +104,12 @@ def update_config(id_, data):
         .eq("id", id_)
         .execute()
     )
+
+def get_config_dict(config_type):
+
+    rows = get_config_values(config_type)
+
+    return {
+        r["value"]: r
+        for r in rows
+    }

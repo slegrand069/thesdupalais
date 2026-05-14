@@ -122,6 +122,18 @@ html, body, [class*="css"] {
     font-size: 14px;
 }
 
+/* BACKGROUND APP : Green Gradient */
+.stApp {
+    background: linear-gradient(
+        90deg,
+        #7FAE7F 0%,
+        #DFF5E1 50%,
+        #7FAE7F 100%
+    );
+
+    background-attachment: fixed;
+}
+            
 /* TITRES */
 h1 {
     font-size: 24px !important;

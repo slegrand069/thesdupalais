@@ -24,568 +24,571 @@ def admin_screen():
         # COLORS
         # =================================================
 
-        st.markdown("### 🎨 Couleurs")
+        with st.expander("🎨 Couleurs", expanded=False):
 
-        colors = get_config_values("color")
+            colors = get_config_values("color")
 
-        # ---------------------------------------------
-        # AJOUT
-        # ---------------------------------------------
+            # ---------------------------------------------
+            # AJOUT
+            # ---------------------------------------------
 
-        with st.form("add_color"):
+            with st.form("add_color"):
 
-            new_color = st.text_input("Nouvelle couleur")
+                new_color = st.text_input("Nouvelle couleur")
 
-            submitted = st.form_submit_button(
-                "➕ Ajouter"
-            )
-
-        if submitted and new_color:
-
-            add_config("color", new_color)
-
-            st.success("Couleur ajoutée")
-
-            st.rerun()
-
-        # ---------------------------------------------
-        # LISTE
-        # ---------------------------------------------
-
-        for c in colors:
-
-            with st.container():
-
-                st.markdown(
-                    """
-                    <div class="form-card">
-                    """,
-                    unsafe_allow_html=True
+                submitted = st.form_submit_button(
+                    "➕ Ajouter"
                 )
 
-                col1, col2, col3 = st.columns([4,2,2])
+            if submitted and new_color:
 
-                # VALUE
+                add_config("color", new_color)
 
-                new_value = col1.text_input(
-                    "Nom",
-                    c["value"],
-                    key=f"value_{c['id']}"
-                )
+                st.success("Couleur ajoutée")
 
-                # SORT
+                st.rerun()
 
-                new_sort = col2.number_input(
-                    "Ordre",
-                    value=c.get("sort_order", 0),
-                    step=1,
-                    key=f"sort_{c['id']}"
-                )
+            # ---------------------------------------------
+            # LISTE
+            # ---------------------------------------------
 
-                # ACTIVE
+            for c in colors:
 
-                active = col3.checkbox(
-                    "Active",
-                    value=c.get("active", True),
-                    key=f"active_{c['id']}"
-                )
+                with st.container():
 
-                # SAVE
-
-                if st.button(
-                    "💾 Sauvegarder",
-                    key=f"save_{c['id']}"
-                ):
-
-                    update_config(
-                        c["id"],
-                        {
-                            "value": new_value,
-                            "sort_order": new_sort,
-                            "active": active
-                        }
+                    st.markdown(
+                        """
+                        <div class="form-card">
+                        """,
+                        unsafe_allow_html=True
                     )
 
-                    st.success("Sauvegardé")
+                    col1, col2, col3, col4 = st.columns([3,2,2,2])
 
-                    st.rerun()
+                    # VALUE
 
-                st.markdown(
-                    "</div>",
-                    unsafe_allow_html=True
-                )
+                    new_value = col1.text_input(
+                        "Nom",
+                        c["value"],
+                        key=f"value_{c['id']}"
+                    )
+
+                    # EXTRA
+                    extra = col2.text_input(
+                        "Extra",
+                        c.get("extra", ""),
+                        key=f"extra_{c['id']}", placeholder="#FFFFFF"
+                    )
+
+                    # SORT
+
+                    new_sort = col3.number_input(
+                        "Ordre",
+                        value=c.get("sort_order", 0),
+                        step=1,
+                        key=f"sort_{c['id']}"
+                    )
+
+                    # ACTIVE
+
+                    active = col4.checkbox(
+                        "Active",
+                        value=c.get("active", True),
+                        key=f"active_{c['id']}"
+                    )
+
+                    # SAVE
+
+                    if st.button(
+                        "💾 Sauvegarder",
+                        key=f"save_{c['id']}"
+                    ):
+
+                        update_config(
+                            c["id"],
+                            {
+                                "value": new_value,
+                                "extra": extra,
+                                "sort_order": new_sort,
+                                "active": active
+                            }
+                        )
+
+                        st.success("Sauvegardé")
+
+                        st.rerun()
+
+                    st.markdown(
+                        "</div>",
+                        unsafe_allow_html=True
+                    )
 
         # =================================================
         # BADGES
         # =================================================
+        with st.expander("🎖️ Badges", expanded=False):
 
-        st.markdown("### 🎖️ Badges")
+            badges = get_config_values("badge")
 
-        badges = get_config_values("badge")
+            # ---------------------------------------------
+            # AJOUT
+            # ---------------------------------------------
 
-        # ---------------------------------------------
-        # AJOUT
-        # ---------------------------------------------
+            with st.form("add_badge"):
 
-        with st.form("add_badge"):
+                new_badge = st.text_input("Nouveau badge")
 
-            new_badge = st.text_input("Nouveau badge")
-
-            submitted = st.form_submit_button(
-                "➕ Ajouter"
-            )
-
-        if submitted and new_badge:
-
-            add_config("badge", new_badge)
-
-            st.success("Badge ajouté")
-
-            st.rerun()
-
-        # ---------------------------------------------
-        # LISTE
-        # ---------------------------------------------
-
-        for c in badges :
-
-            with st.container():
-
-                st.markdown(
-                    """
-                    <div class="form-card">
-                    """,
-                    unsafe_allow_html=True
+                submitted = st.form_submit_button(
+                    "➕ Ajouter"
                 )
 
-                col1, col2, col3 = st.columns([4,2,2])
+            if submitted and new_badge:
 
-                # VALUE
+                add_config("badge", new_badge)
 
-                new_value = col1.text_input(
-                    "Nom",
-                    c["value"],
-                    key=f"value_{c['id']}"
-                )
+                st.success("Badge ajouté")
 
-                # SORT
+                st.rerun()
 
-                new_sort = col2.number_input(
-                    "Ordre",
-                    value=c.get("sort_order", 0),
-                    step=1,
-                    key=f"sort_{c['id']}"
-                )
+            # ---------------------------------------------
+            # LISTE
+            # ---------------------------------------------
 
-                # ACTIVE
+            for c in badges :
 
-                active = col3.checkbox(
-                    "Active",
-                    value=c.get("active", True),
-                    key=f"active_{c['id']}"
-                )
+                with st.container():
 
-                # SAVE
-
-                if st.button(
-                    "💾 Sauvegarder",
-                    key=f"save_{c['id']}"
-                ):
-
-                    update_config(
-                        c["id"],
-                        {
-                            "value": new_value,
-                            "sort_order": new_sort,
-                            "active": active
-                        }
+                    st.markdown(
+                        """
+                        <div class="form-card">
+                        """,
+                        unsafe_allow_html=True
                     )
 
-                    st.success("Sauvegardé")
+                    col1, col2, col3 = st.columns([4,2,2])
 
-                    st.rerun()
+                    # VALUE
 
-                st.markdown(
-                    "</div>",
-                    unsafe_allow_html=True
-                )
+                    new_value = col1.text_input(
+                        "Nom",
+                        c["value"],
+                        key=f"value_{c['id']}"
+                    )
+
+                    # SORT
+
+                    new_sort = col2.number_input(
+                        "Ordre",
+                        value=c.get("sort_order", 0),
+                        step=1,
+                        key=f"sort_{c['id']}"
+                    )
+
+                    # ACTIVE
+
+                    active = col3.checkbox(
+                        "Active",
+                        value=c.get("active", True),
+                        key=f"active_{c['id']}"
+                    )
+
+                    # SAVE
+
+                    if st.button(
+                        "💾 Sauvegarder",
+                        key=f"save_{c['id']}"
+                    ):
+
+                        update_config(
+                            c["id"],
+                            {
+                                "value": new_value,
+                                "sort_order": new_sort,
+                                "active": active
+                            }
+                        )
+
+                        st.success("Sauvegardé")
+
+                        st.rerun()
+
+                    st.markdown(
+                        "</div>",
+                        unsafe_allow_html=True
+                    )
 
         # =================================================
         # Profil aromatique
         # =================================================
+        with st.expander("🌸 Profil aromatique", expanded=False):
 
-        st.markdown("### 🌸 Profil aromatique")
+            keywords = get_config_values("profilAromatique")
 
-        keywords = get_config_values("profilAromatique")
+            # ---------------------------------------------
+            # AJOUT
+            # ---------------------------------------------
 
-        # ---------------------------------------------
-        # AJOUT
-        # ---------------------------------------------
+            with st.form("add_keyword"):
 
-        with st.form("add_keyword"):
+                new_keyword = st.text_input("Nouveau mot-clé")
 
-            new_keyword = st.text_input("Nouveau mot-clé")
-
-            submitted = st.form_submit_button(
-                "➕ Ajouter"
-            )
-
-        if submitted and new_keyword:
-
-            add_config("profilAromatique", new_keyword)
-
-            st.success("Mot-clé ajouté")
-
-            st.rerun()
-
-        # ---------------------------------------------
-        # LISTE
-        # ---------------------------------------------
-
-        for c in keywords :
-
-            with st.container():
-
-                st.markdown(
-                    """
-                    <div class="form-card">
-                    """,
-                    unsafe_allow_html=True
+                submitted = st.form_submit_button(
+                    "➕ Ajouter"
                 )
 
-                col1, col2, col3 = st.columns([4,2,2])
+            if submitted and new_keyword:
 
-                # VALUE
+                add_config("profilAromatique", new_keyword)
 
-                new_value = col1.text_input(
-                    "Nom",
-                    c["value"],
-                    key=f"value_{c['id']}"
-                )
+                st.success("Mot-clé ajouté")
 
-                # SORT
+                st.rerun()
 
-                new_sort = col2.number_input(
-                    "Ordre",
-                    value=c.get("sort_order", 0),
-                    step=1,
-                    key=f"sort_{c['id']}"
-                )
+            # ---------------------------------------------
+            # LISTE
+            # ---------------------------------------------
 
-                # ACTIVE
+            for c in keywords :
 
-                active = col3.checkbox(
-                    "Active",
-                    value=c.get("active", True),
-                    key=f"active_{c['id']}"
-                )
+                with st.container():
 
-                # SAVE
-
-                if st.button(
-                    "💾 Sauvegarder",
-                    key=f"save_{c['id']}"
-                ):
-
-                    update_config(
-                        c["id"],
-                        {
-                            "value": new_value,
-                            "sort_order": new_sort,
-                            "active": active
-                        }
+                    st.markdown(
+                        """
+                        <div class="form-card">
+                        """,
+                        unsafe_allow_html=True
                     )
 
-                    st.success("Sauvegardé")
+                    col1, col2, col3 = st.columns([4,2,2])
 
-                    st.rerun()
+                    # VALUE
 
-                st.markdown(
-                    "</div>",
-                    unsafe_allow_html=True
-                )
+                    new_value = col1.text_input(
+                        "Nom",
+                        c["value"],
+                        key=f"value_{c['id']}"
+                    )
+
+                    # SORT
+
+                    new_sort = col2.number_input(
+                        "Ordre",
+                        value=c.get("sort_order", 0),
+                        step=1,
+                        key=f"sort_{c['id']}"
+                    )
+
+                    # ACTIVE
+
+                    active = col3.checkbox(
+                        "Active",
+                        value=c.get("active", True),
+                        key=f"active_{c['id']}"
+                    )
+
+                    # SAVE
+
+                    if st.button(
+                        "💾 Sauvegarder",
+                        key=f"save_{c['id']}"
+                    ):
+
+                        update_config(
+                            c["id"],
+                            {
+                                "value": new_value,
+                                "sort_order": new_sort,
+                                "active": active
+                            }
+                        )
+
+                        st.success("Sauvegardé")
+
+                        st.rerun()
+
+                    st.markdown(
+                        "</div>",
+                        unsafe_allow_html=True
+                    )
 
         # =================================================
         # Moments
         # =================================================
+        with st.expander("🕒 Moments", expanded=False):
 
-        st.markdown("### 🕒 Moments")
+            moments = get_config_values("moment")
 
-        moments = get_config_values("moment")
+            # ---------------------------------------------
+            # AJOUT
+            # ---------------------------------------------
 
-        # ---------------------------------------------
-        # AJOUT
-        # ---------------------------------------------
+            with st.form("add_moment"):
 
-        with st.form("add_moment"):
+                new_moment = st.text_input("Nouveau moment")
 
-            new_moment = st.text_input("Nouveau moment")
-
-            submitted = st.form_submit_button(
-                "➕ Ajouter"
-            )
-
-        if submitted and new_moment:
-
-            add_config("moment", new_moment)
-
-            st.success("Moment ajouté")
-
-            st.rerun()
-
-        # ---------------------------------------------
-        # LISTE
-        # ---------------------------------------------
-
-        for c in moments :
-
-            with st.container():
-
-                st.markdown(
-                    """
-                    <div class="form-card">
-                    """,
-                    unsafe_allow_html=True
+                submitted = st.form_submit_button(
+                    "➕ Ajouter"
                 )
 
-                col1, col2, col3 = st.columns([4,2,2])
+            if submitted and new_moment:
 
-                # VALUE
+                add_config("moment", new_moment)
 
-                new_value = col1.text_input(
-                    "Nom",
-                    c["value"],
-                    key=f"value_{c['id']}"
-                )
+                st.success("Moment ajouté")
 
-                # SORT
+                st.rerun()
 
-                new_sort = col2.number_input(
-                    "Ordre",
-                    value=c.get("sort_order", 0),
-                    step=1,
-                    key=f"sort_{c['id']}"
-                )
+            # ---------------------------------------------
+            # LISTE
+            # ---------------------------------------------
 
-                # ACTIVE
+            for c in moments :
 
-                active = col3.checkbox(
-                    "Active",
-                    value=c.get("active", True),
-                    key=f"active_{c['id']}"
-                )
+                with st.container():
 
-                # SAVE
-
-                if st.button(
-                    "💾 Sauvegarder",
-                    key=f"save_{c['id']}"
-                ):
-
-                    update_config(
-                        c["id"],
-                        {
-                            "value": new_value,
-                            "sort_order": new_sort,
-                            "active": active
-                        }
+                    st.markdown(
+                        """
+                        <div class="form-card">
+                        """,
+                        unsafe_allow_html=True
                     )
 
-                    st.success("Sauvegardé")
+                    col1, col2, col3 = st.columns([4,2,2])
 
-                    st.rerun()
+                    # VALUE
 
-                st.markdown(
-                    "</div>",
-                    unsafe_allow_html=True
-                )
+                    new_value = col1.text_input(
+                        "Nom",
+                        c["value"],
+                        key=f"value_{c['id']}"
+                    )
+
+                    # SORT
+
+                    new_sort = col2.number_input(
+                        "Ordre",
+                        value=c.get("sort_order", 0),
+                        step=1,
+                        key=f"sort_{c['id']}"
+                    )
+
+                    # ACTIVE
+
+                    active = col3.checkbox(
+                        "Active",
+                        value=c.get("active", True),
+                        key=f"active_{c['id']}"
+                    )
+
+                    # SAVE
+
+                    if st.button(
+                        "💾 Sauvegarder",
+                        key=f"save_{c['id']}"
+                    ):
+
+                        update_config(
+                            c["id"],
+                            {
+                                "value": new_value,
+                                "sort_order": new_sort,
+                                "active": active
+                            }
+                        )
+
+                        st.success("Sauvegardé")
+
+                        st.rerun()
+
+                    st.markdown(
+                        "</div>",
+                        unsafe_allow_html=True
+                    )
 
         # =================================================
         # Containers
         # =================================================
+        with st.expander("📦 Containers", expanded=False):
 
-        st.markdown("### 📦 Containers")
+            containers = get_config_values("contenant")
 
-        containers = get_config_values("contenant")
+            # ---------------------------------------------
+            # AJOUT
+            # ---------------------------------------------
 
-        # ---------------------------------------------
-        # AJOUT
-        # ---------------------------------------------
+            with st.form("add_container"):
 
-        with st.form("add_container"):
+                new_container = st.text_input("Nouveau contenant")
 
-            new_container = st.text_input("Nouveau contenant")
-
-            submitted = st.form_submit_button(
-                "➕ Ajouter"
-            )
-
-        if submitted and new_container:
-
-            add_config("contenant", new_container)
-
-            st.success("Contenant ajouté")
-
-            st.rerun()
-
-        # ---------------------------------------------
-        # LISTE
-        # ---------------------------------------------
-
-        for c in containers :
-
-            with st.container():
-
-                st.markdown(
-                    """
-                    <div class="form-card">
-                    """,
-                    unsafe_allow_html=True
+                submitted = st.form_submit_button(
+                    "➕ Ajouter"
                 )
 
-                col1, col2, col3 = st.columns([4,2,2])
+            if submitted and new_container:
 
-                # VALUE
+                add_config("contenant", new_container)
 
-                new_value = col1.text_input(
-                    "Nom",
-                    c["value"],
-                    key=f"value_{c['id']}"
-                )
+                st.success("Contenant ajouté")
 
-                # SORT
+                st.rerun()
 
-                new_sort = col2.number_input(
-                    "Ordre",
-                    value=c.get("sort_order", 0),
-                    step=1,
-                    key=f"sort_{c['id']}"
-                )
+            # ---------------------------------------------
+            # LISTE
+            # ---------------------------------------------
 
-                # ACTIVE
+            for c in containers :
 
-                active = col3.checkbox(
-                    "Active",
-                    value=c.get("active", True),
-                    key=f"active_{c['id']}"
-                )
+                with st.container():
 
-                # SAVE
-
-                if st.button(
-                    "💾 Sauvegarder",
-                    key=f"save_{c['id']}"
-                ):
-
-                    update_config(
-                        c["id"],
-                        {
-                            "value": new_value,
-                            "sort_order": new_sort,
-                            "active": active
-                        }
+                    st.markdown(
+                        """
+                        <div class="form-card">
+                        """,
+                        unsafe_allow_html=True
                     )
 
-                    st.success("Sauvegardé")
+                    col1, col2, col3 = st.columns([4,2,2])
 
-                    st.rerun()
+                    # VALUE
 
-                st.markdown(
-                    "</div>",
-                    unsafe_allow_html=True
-                )
+                    new_value = col1.text_input(
+                        "Nom",
+                        c["value"],
+                        key=f"value_{c['id']}"
+                    )
+
+                    # SORT
+
+                    new_sort = col2.number_input(
+                        "Ordre",
+                        value=c.get("sort_order", 0),
+                        step=1,
+                        key=f"sort_{c['id']}"
+                    )
+
+                    # ACTIVE
+
+                    active = col3.checkbox(
+                        "Active",
+                        value=c.get("active", True),
+                        key=f"active_{c['id']}"
+                    )
+
+                    # SAVE
+
+                    if st.button(
+                        "💾 Sauvegarder",
+                        key=f"save_{c['id']}"
+                    ):
+
+                        update_config(
+                            c["id"],
+                            {
+                                "value": new_value,
+                                "sort_order": new_sort,
+                                "active": active
+                            }
+                        )
+
+                        st.success("Sauvegardé")
+
+                        st.rerun()
+
+                    st.markdown(
+                        "</div>",
+                        unsafe_allow_html=True
+                    )
 
         # =================================================
         # Statuts
         # =================================================
+        with st.expander("📋 Statuts", expanded=False):
 
-        st.markdown("### 📋 Statuts")
+            statuses = get_config_values("status")
 
-        statuses = get_config_values("status")
+            # ---------------------------------------------
+            # AJOUT
+            # ---------------------------------------------
 
-        # ---------------------------------------------
-        # AJOUT
-        # ---------------------------------------------
+            with st.form("add_status"):
 
-        with st.form("add_status"):
+                new_status = st.text_input("Nouveau statut")
 
-            new_status = st.text_input("Nouveau statut")
-
-            submitted = st.form_submit_button(
-                "➕ Ajouter"
-            )
-
-        if submitted and new_status:
-
-            add_config("status", new_status)
-
-            st.success("Statut ajouté")
-
-            st.rerun()
-
-        # ---------------------------------------------
-        # LISTE
-        # ---------------------------------------------
-
-        for c in statuses :
-
-            with st.container():
-
-                st.markdown(
-                    """
-                    <div class="form-card">
-                    """,
-                    unsafe_allow_html=True
+                submitted = st.form_submit_button(
+                    "➕ Ajouter"
                 )
 
-                col1, col2, col3 = st.columns([4,2,2])
+            if submitted and new_status:
 
-                # VALUE
+                add_config("status", new_status)
 
-                new_value = col1.text_input(
-                    "Nom",
-                    c["value"],
-                    key=f"value_{c['id']}"
-                )
+                st.success("Statut ajouté")
 
-                # SORT
+                st.rerun()
 
-                new_sort = col2.number_input(
-                    "Ordre",
-                    value=c.get("sort_order", 0),
-                    step=1,
-                    key=f"sort_{c['id']}"
-                )
+            # ---------------------------------------------
+            # LISTE
+            # ---------------------------------------------
 
-                # ACTIVE
+            for c in statuses :
 
-                active = col3.checkbox(
-                    "Active",
-                    value=c.get("active", True),
-                    key=f"active_{c['id']}"
-                )
+                with st.container():
 
-                # SAVE
-
-                if st.button(
-                    "💾 Sauvegarder",
-                    key=f"save_{c['id']}"
-                ):
-
-                    update_config(
-                        c["id"],
-                        {
-                            "value": new_value,
-                            "sort_order": new_sort,
-                            "active": active
-                        }
+                    st.markdown(
+                        """
+                        <div class="form-card">
+                        """,
+                        unsafe_allow_html=True
                     )
 
-                    st.success("Sauvegardé")
+                    col1, col2, col3 = st.columns([4,2,2])
 
-                    st.rerun()
+                    # VALUE
 
-                st.markdown(
-                    "</div>",
-                    unsafe_allow_html=True
-                )
+                    new_value = col1.text_input(
+                        "Nom",
+                        c["value"],
+                        key=f"value_{c['id']}"
+                    )
+
+                    # SORT
+
+                    new_sort = col2.number_input(
+                        "Ordre",
+                        value=c.get("sort_order", 0),
+                        step=1,
+                        key=f"sort_{c['id']}"
+                    )
+
+                    # ACTIVE
+
+                    active = col3.checkbox(
+                        "Active",
+                        value=c.get("active", True),
+                        key=f"active_{c['id']}"
+                    )
+
+                    # SAVE
+
+                    if st.button(
+                        "💾 Sauvegarder",
+                        key=f"save_{c['id']}"
+                    ):
+
+                        update_config(
+                            c["id"],
+                            {
+                                "value": new_value,
+                                "sort_order": new_sort,
+                                "active": active
+                            }
+                        )
+
+                        st.success("Sauvegardé")
+
+                        st.rerun()
+
+                    st.markdown(
+                        "</div>",
+                        unsafe_allow_html=True
+                    )

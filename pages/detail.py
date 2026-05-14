@@ -1,6 +1,6 @@
 import streamlit as st
 import textwrap
-from models import get_tea_by_id
+from models import get_config_dict, get_tea_by_id
 
 
 def detail_screen():
@@ -21,19 +21,28 @@ def detail_screen():
     def to_list(v):
         return [x.strip() for x in v.split(",")] if v else []
 
-    def get_color(color):
+    #def get_color(color):
 
-        return {
-            "Vert": "#DFF5E1",
-            "Noir": "#E5E5E5",
-            "Blanc": "#FAFAFA",
-            "Oolong": "#FFE8D6",
-            "Pu'erh": "#E8DED3",
-            "Mixte": "#FFE3EC",
-            "Infusion": "#E3F0FF"
-        }.get(color, "#FFFFFF")
+    #    return {
+    #        "Vert": "#DFF5E1",
+    #        "Noir": "#E5E5E5",
+    #        "Blanc": "#FAFAFA",
+    #        "Oolong": "#FFE8D6",
+    #        "Pu'erh": "#E8DED3",
+    #        "Mixte": "#FFE3EC",
+    #        "Infusion": "#E3F0FF"
+    #    }.get(color, "#FFFFFF")
+    COLORS = get_config_dict("color")
 
-    bg = get_color(tea.get("color"))
+    bg = COLORS.get(
+        tea.get("color"),
+        {}
+    ).get(
+        "extra",
+        "#FFFFFF"
+    )
+
+    #bg = get_color(tea.get("color"))
 
     badges = to_list(tea.get("badges"))
     keywords = to_list(tea.get("keywords"))
