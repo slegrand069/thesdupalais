@@ -113,3 +113,25 @@ def get_config_dict(config_type):
         r["value"]: r
         for r in rows
     }
+
+def get_synonyms():
+
+    rows = get_config_values("synonym")
+
+    result = {}
+
+    for r in rows:
+
+        value = r["value"].lower()
+
+        extra = r.get("extra", "")
+
+        words = [
+            x.strip().lower()
+            for x in extra.split(",")
+            if x.strip()
+        ]
+
+        result[value] = words
+
+    return result

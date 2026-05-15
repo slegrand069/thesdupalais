@@ -592,3 +592,107 @@ def admin_screen():
                         "</div>",
                         unsafe_allow_html=True
                     )
+
+        # =================================================
+        # SYNONYMS
+        # =================================================
+
+        with st.expander("🧠 synonymes", expanded=False):
+
+            synonyms = get_config_values("synonym")
+
+            # ---------------------------------------------
+            # AJOUT
+            # ---------------------------------------------
+
+            with st.form("add_synonym"):
+
+                new_synonym = st.text_input("Nouveau synonyme")
+
+                submitted = st.form_submit_button(
+                    "➕ Ajouter"
+                )
+
+            if submitted and new_synonym:
+
+                add_config("synonym", new_synonym)
+
+                st.success("Synonyme ajouté")
+
+                st.rerun()
+
+            # ---------------------------------------------
+            # LISTE
+            # ---------------------------------------------
+
+            for c in synonyms:
+
+                with st.container():
+
+                    st.markdown(
+                        """
+                        <div class="form-card">
+                        """,
+                        unsafe_allow_html=True
+                    )
+
+                    col1, col2, col3, col4 = st.columns([3,2,2,2])
+
+                    # VALUE
+
+                    new_value = col1.text_input(
+                        "Nom",
+                        c["value"],
+                        key=f"value_{c['id']}"
+                    )
+
+                    # EXTRA
+                    extra = col2.text_input(
+                        "Synonymes (séparés par des virgules)",
+                        c.get("extra", ""),
+                        key=f"extra_{c['id']}", placeholder="valeur1,valeur2,valeur3"
+                    )
+
+                    # SORT
+
+                    new_sort = col3.number_input(
+                        "Ordre",
+                        value=c.get("sort_order", 0),
+                        step=1,
+                        key=f"sort_{c['id']}"
+                    )
+
+                    # ACTIVE
+
+                    active = col4.checkbox(
+                        "Active",
+                        value=c.get("active", True),
+                        key=f"active_{c['id']}"
+                    )
+
+                    # SAVE
+
+                    if st.button(
+                        "💾 Sauvegarder",
+                        key=f"save_{c['id']}"
+                    ):
+
+                        update_config(
+                            c["id"],
+                            {
+                                "value": new_value,
+                                "extra": extra,
+                                "sort_order": new_sort,
+                                "active": active
+                            }
+                        )
+
+                        st.success("Sauvegardé")
+
+                        st.rerun()
+
+                    st.markdown(
+                        "</div>",
+                        unsafe_allow_html=True
+                    )
+

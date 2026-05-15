@@ -127,7 +127,7 @@ html, body, [class*="css"] {
     background: linear-gradient(
         90deg,
         #7FAE7F 0%,
-        #DFF5E1 50%,
+        #CFE5D1 50%,
         #7FAE7F 100%
     );
 
