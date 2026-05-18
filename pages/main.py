@@ -1,12 +1,15 @@
 from models import (
-    get_teas,
-    get_config_dict
+    get_teas
 )
 
 from nlp import (
     score_tea,
     smart_filter,
     match_loose
+)
+
+from config import (
+    get_color_hex
 )
 
 import streamlit as st
@@ -19,8 +22,6 @@ def main_screen():
 
     user_id = st.session_state.user.id
 
-    COLORS = get_config_dict("color")
-
     st.markdown("## 🍵 Mes thés")
 
     # =================================================
@@ -29,9 +30,22 @@ def main_screen():
 
     col1, col2 = st.columns([4,1])
 
+    mode = col2.radio(
+        "",
+        ["🔎", "🧠"],
+        horizontal=True
+    )
+
+    placeholder = (
+        "🔍 Rechercher un thé, origine, arôme..."
+        if mode == "🔎"
+        else
+        "🧠 Dites moi simplement ce que vous recherchez..."
+    )
+
     search = col1.text_input(
         "",
-        placeholder="🔍 Rechercher"
+        placeholder=placeholder
     )
 
     if search.strip().lower() == "/admin":
@@ -40,11 +54,6 @@ def main_screen():
 
         st.rerun()
 
-    mode = col2.radio(
-        "",
-        ["🔎", "🧠"],
-        horizontal=True
-    )
 
     # =================================================
     # LOAD
@@ -86,7 +95,7 @@ def main_screen():
     # =================================================
 
     col1, col2 = st.columns(
-        [1,1],
+        [4,1],
         gap="small"
     )
 
@@ -137,13 +146,7 @@ def main_screen():
 
     for t in teas:
 
-        bg = COLORS.get(
-            t["color"],
-            {}
-        ).get(
-            "extra",
-            "#FFFFFF"
-        )
+        bg = get_color_hex(t["color"])
 
         badges = [
 
@@ -183,3 +186,4 @@ def main_screen():
             st.session_state.page = "detail"
 
             st.rerun()
+

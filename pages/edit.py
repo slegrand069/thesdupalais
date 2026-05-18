@@ -1,6 +1,18 @@
 import streamlit as st
-from models import add_tea, get_config_dict, update_tea, get_tea_by_id, get_config_values
+from models import (
+    add_tea, 
+    update_tea, 
+    get_tea_by_id 
+)
 
+from config import (
+    get_color_names,
+    get_keywords,
+    get_badges,
+    get_moments,
+    get_status,
+    get_containers
+)
 
 def edit_screen():
 
@@ -13,42 +25,17 @@ def edit_screen():
         return tea.get(key, default) if tea else default
 
     def to_list(v):
-        return [x.strip() for x in v.split(",")] if v else []
+        if not v:
+            return []
+        return [
+            x.strip()
+            for x in v.split(",")
+            if x.strip()
+        ]
 
     st.markdown(
         f"## {'✏️ Modifier un thé' if tea_id else '🍵 Nouveau thé'}"
     )
-
-    # ---------------------------------------------------
-    # DATA
-    # ---------------------------------------------------
-
-    COLORS = get_config_dict("color");
-
-    BADGES = [
-        x["value"]
-        for x in get_config_values("badge")
-    ]
-
-    KEYWORDS = [
-        x["value"]  
-        for x in get_config_values("profilAromatique")
-    ]
-
-    MOMENTS = [
-        x["value"]
-        for x in get_config_values("moment")
-    ]
-
-    STATUS = [ 
-        x["value"]
-        for x in get_config_values("status")
-    ]
-
-    CONTAINERS = [
-        x["value"]
-        for x in get_config_values("contenant")
-    ]
 
     # ---------------------------------------------------
     # FORM
@@ -60,203 +47,174 @@ def edit_screen():
         # 🍵 IDENTITÉ
         # =================================================
 
-        st.markdown(
-            '<div class="form-card">',
-            unsafe_allow_html=True
-        )
+        with st.expander("🍵 Identité", expanded=True):
+            name = st.text_input(
+                "Nom",
+                val("name")
+            )
 
-        st.markdown("### 🍵 Identité")
+            origin = st.text_input(
+                "Origine",
+                val("origin")
+            )
 
-        name = st.text_input(
-            "Nom",
-            val("name")
-        )
+            color_names = get_color_names()
 
-        origin = st.text_input(
-            "Origine",
-            val("origin")
-        )
-
-        color_names = list(COLORS.keys())
-
-        color = st.selectbox(
-            "Couleur",
-            color_names,
-            index=color_names.index(val("color"))
-            if val("color") in color_names
-            else 0
-        )
-            
-        selected_badges = st.multiselect(
-            "🏅 Badges",
-            BADGES,
-            default=to_list(val("badges"))
-        )
-
-        st.markdown("</div>", unsafe_allow_html=True)
+            color = st.selectbox(
+                "Couleur",
+                color_names,
+                index=color_names.index(val("color"))
+                if val("color") in color_names
+                else 0
+            )
+                
+            selected_badges = st.multiselect(
+                "🏅 Badges",
+                get_badges(),
+                default=to_list(val("badges"))
+            )
 
         # =================================================
         # 👃 PROFIL SENSORIEL
         # =================================================
 
-        st.markdown(
-            '<div class="form-card">',
-            unsafe_allow_html=True
-        )
+        with st.expander("👃 Profil sensoriel", expanded=True):
 
-        st.markdown("### 👃 Profil sensoriel")
+            description = st.text_area(
+                "Description",
+                val("description"),
+                height=120
+            )
 
-        description = st.text_area(
-            "Description",
-            val("description"),
-            height=120
-        )
+            aromas = st.text_input(
+                "Arômes",
+                val("aromas")
+            )
 
-        aromas = st.text_input(
-            "Arômes",
-            val("aromas")
-        )
+            keywords_options = [
+                x.strip()
+                for x in get_keywords()
+            ]
+    
+            default_keywords = [
+                k
+                for k in to_list(val("keywords"))
+                if k in keywords_options
+            ]
 
-        selected_kw = st.multiselect(
-            "🏷️ Profil aromatique",
-            KEYWORDS,
-            default=to_list(val("keywords"))
-        )
-
-        st.markdown("</div>", unsafe_allow_html=True)
+            selected_kw = st.multiselect(
+                "🏷️ Profil aromatique",
+                keywords_options,
+                default=default_keywords
+            )
 
         # =================================================
         # ⭐ DÉGUSTATION
         # =================================================
 
-        st.markdown(
-            '<div class="form-card">',
-            unsafe_allow_html=True
-        )
+        with st.expander("⭐ Dégustation", expanded=True):
+            col1, col2 = st.columns(2)
 
-        st.markdown("### ⭐ Dégustation")
+            with col1:
 
-        col1, col2 = st.columns(2)
+                smell = st.slider(
+                    "👃 Olfactif",
+                    0,
+                    10,
+                    int(val("smell_rating", 5))
+                )
 
-        with col1:
+                taste = st.slider(
+                    "🍵 Gustatif",
+                    0,
+                    10,
+                    int(val("taste_rating", 5))
+                )
 
-            smell = st.slider(
-                "👃 Olfactif",
-                0,
-                10,
-                int(val("smell_rating", 5))
+            with col2:
+
+                temp = st.slider(
+                    "🌡 Température",
+                    50,
+                    100,
+                    int(val("temperature", 75)),
+                    step=5
+                )
+
+                duration = st.slider(
+                    "⏳ Durée",
+                    0,
+                    10,
+                    int(val("duration", 3))
+                )
+
+            moment = st.selectbox(
+                "🌙 Moment idéal",
+                get_moments(),
+                index=get_moments().index(val("moment"))
+                if val("moment") in get_moments()
+                else 0
             )
-
-            taste = st.slider(
-                "🍵 Gustatif",
-                0,
-                10,
-                int(val("taste_rating", 5))
-            )
-
-        with col2:
-
-            temp = st.slider(
-                "🌡 Température",
-                50,
-                100,
-                int(val("temperature", 75)),
-                step=5
-            )
-
-            duration = st.slider(
-                "⏳ Durée",
-                0,
-                10,
-                int(val("duration", 3))
-            )
-
-        moment = st.selectbox(
-            "🌙 Moment idéal",
-            MOMENTS,
-            index=MOMENTS.index(val("moment"))
-            if val("moment") in MOMENTS
-            else 0
-        )
-
-        st.markdown("</div>", unsafe_allow_html=True)
 
         # =================================================
         # 📦 GESTION
         # =================================================
 
-        st.markdown(
-            '<div class="form-card">',
-            unsafe_allow_html=True
-        )
+        with st.expander("📦 Gestion", expanded=True):
 
-        st.markdown("### 📦 Gestion")
+            container = st.selectbox(
+                "Contenant",
+                get_containers(),
+                index=get_containers().index(val("container"))
+                if val("container") in get_containers()
+                else 0
+            )
 
-        container = st.selectbox(
-            "Contenant",
-            CONTAINERS,
-            index=CONTAINERS.index(val("container"))
-            if val("container") in CONTAINERS
-            else 0
-        )
+            status = st.selectbox(
+                "Statut",
+                get_status(),
+                index=get_status().index(val("status"))
+                if val("status") in get_status()
+                else 0
+            )
 
-        status = st.selectbox(
-            "Statut",
-            STATUS,
-            index=STATUS.index(val("status"))
-            if val("status") in STATUS
-            else 0
-        )
-
-        technical = st.text_area(
-            "⚙️ Notes techniques",
-            val("technical"),
-            height=100
-        )
-
-        st.markdown("</div>", unsafe_allow_html=True)
+            technical = st.text_area(
+                "⚙️ Notes techniques",
+                val("technical"),
+                height=100
+            )
 
         # =================================================
         # 📝 NOTES PERSO
         # =================================================
 
-        st.markdown(
-            '<div class="form-card">',
-            unsafe_allow_html=True
-        )
-
-        st.markdown("### 📝 Notes personnelles")
-
-        personal = st.text_area(
+        with st.expander("📝 Notes personnelles", expanded=True):
+            personal = st.text_area(
             "Notes perso",
             val("personal_notes"),
             height=140
         )
 
-        st.markdown("</div>", unsafe_allow_html=True)
-
         # =================================================
         # ACTIONS
         # =================================================
 
-        st.markdown(
-            '<div class="action-bar">',
-            unsafe_allow_html=True
-        )
 
-        col1, col2 = st.columns(2)
+        col1, col2, col3 = st.columns([1,2,1])
 
-        submitted = col1.form_submit_button(
-            "💾 Enregistrer",
-            use_container_width=True
-        )
+        with col1:
 
-        cancel = col2.form_submit_button(
-            "⬅️ Annuler",
-            use_container_width=True
-        )
+            submitted = st.form_submit_button(
+                "💾 Enregistrer",
+                use_container_width=True
+            )
 
-        st.markdown("</div>", unsafe_allow_html=True)
+        with col3:
+
+            cancel = st.form_submit_button(
+                "⬅️ Annuler",
+                use_container_width=True
+            )
 
     # ---------------------------------------------------
     # LOGIC

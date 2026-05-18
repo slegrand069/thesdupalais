@@ -57,46 +57,84 @@ def admin_screen():
                 with st.container():
 
                     st.markdown(
-                        """
-                        <div class="form-card">
-                        """,
+                        '<div class="form-card">',
                         unsafe_allow_html=True
                     )
 
-                    col1, col2, col3, col4 = st.columns([3,2,2,2])
+                    col0, col1, col2, col3, col4 = st.columns([1,3,2,2,1])
 
+                    # =================================================
+                    # PREVIEW COLOR
+                    # =================================================
+
+                    with col0:
+
+                        color_value = c.get("extra") or "#FFFFFF"
+
+                        st.markdown(f"""
+                            <div style="
+                                width:32px;
+                                height:32px;
+                                border-radius:8px;
+                                background:{color_value};
+                                border:1px solid rgba(0,0,0,0.15);
+                                margin-top:28px;
+                            "></div>
+                        """, unsafe_allow_html=True)
+
+                    # =================================================
                     # VALUE
+                    # =================================================
 
-                    new_value = col1.text_input(
-                        "Nom",
-                        c["value"],
-                        key=f"value_{c['id']}"
-                    )
+                    with col1:
 
-                    # EXTRA
-                    extra = col2.text_input(
-                        "Extra",
-                        c.get("extra", ""),
-                        key=f"extra_{c['id']}", placeholder="#FFFFFF"
-                    )
+                        new_value = st.text_input(
+                            "Nom",
+                            c["value"],
+                            key=f"value_{c['id']}"
+                        )
 
+                    # =================================================
+                    # COLOR PICKER
+                    # =================================================
+
+                    with col2:
+
+                        new_extra = st.color_picker(
+                            "Couleur",
+                            value=color_value,
+                            key=f"extra_{c['id']}"
+                        )
+
+                    # =================================================
                     # SORT
+                    # =================================================
 
-                    new_sort = col3.number_input(
-                        "Ordre",
-                        value=c.get("sort_order", 0),
-                        step=1,
-                        key=f"sort_{c['id']}"
-                    )
+                    with col3:
 
+                        new_sort = st.number_input(
+                            "Ordre",
+                            value=c.get("sort_order", 0),
+                            step=1,
+                            key=f"sort_{c['id']}"
+                        )
+
+                    # =================================================
                     # ACTIVE
+                    # =================================================
 
-                    active = col4.checkbox(
-                        "Active",
-                        value=c.get("active", True),
-                        key=f"active_{c['id']}"
+                    with col4:
+
+                        new_active = st.checkbox(
+                            "ON",
+                            value=c.get("active", True),
+                            key=f"active_{c['id']}"
+                        )
+
+                    st.markdown(
+                        "</div>",
+                        unsafe_allow_html=True
                     )
-
                     # SAVE
 
                     if st.button(
@@ -108,9 +146,9 @@ def admin_screen():
                             c["id"],
                             {
                                 "value": new_value,
-                                "extra": extra,
+                                "extra": new_extra,
                                 "sort_order": new_sort,
-                                "active": active
+                                "active": new_active
                             }
                         )
 
@@ -636,7 +674,7 @@ def admin_screen():
                         unsafe_allow_html=True
                     )
 
-                    col1, col2, col3, col4 = st.columns([3,2,2,2])
+                    col1, col2, col3, col4 = st.columns([3,3,1,2])
 
                     # VALUE
 
@@ -648,7 +686,7 @@ def admin_screen():
 
                     # EXTRA
                     extra = col2.text_input(
-                        "Synonymes (séparés par des virgules)",
+                        "Synonymes",
                         c.get("extra", ""),
                         key=f"extra_{c['id']}", placeholder="valeur1,valeur2,valeur3"
                     )
@@ -696,3 +734,411 @@ def admin_screen():
                         unsafe_allow_html=True
                     )
 
+        # =================================================
+        # NATIONALITIES
+        # =================================================
+
+        with st.expander("🌍 nationalités", expanded=False):
+
+            countries = get_config_values("nationality")
+
+            # ---------------------------------------------
+            # AJOUT
+            # ---------------------------------------------
+
+            with st.form("add_nationality"):
+
+                new_nationality = st.text_input("Nouvelle nationalité")
+
+                submitted = st.form_submit_button(
+                    "➕ Ajouter"
+                )
+
+            if submitted and new_nationality:
+
+                add_config("nationality", new_nationality)
+
+                st.success("Nationalité ajoutée")
+
+                st.rerun()
+
+            # ---------------------------------------------
+            # LISTE
+            # ---------------------------------------------
+
+            for c in countries:
+
+                with st.container():
+
+                    st.markdown(
+                        """
+                        <div class="form-card">
+                        """,
+                        unsafe_allow_html=True
+                    )
+
+                    col1, col2, col3, col4 = st.columns([3,2,2,2])
+
+                    # VALUE
+
+                    new_value = col1.text_input(
+                        "Nationalité",
+                        c["value"],
+                        key=f"value_{c['id']}"
+                    )
+
+                    # EXTRA
+                    extra = col2.text_input(
+                        "Pays",
+                        c.get("extra", ""),
+                        key=f"extra_{c['id']}", placeholder="valeur1,valeur2,valeur3"
+                    )
+
+                    # SORT
+
+                    new_sort = col3.number_input(
+                        "Ordre",
+                        value=c.get("sort_order", 0),
+                        step=1,
+                        key=f"sort_{c['id']}"
+                    )
+
+                    # ACTIVE
+
+                    active = col4.checkbox(
+                        "Active",
+                        value=c.get("active", True),
+                        key=f"active_{c['id']}"
+                    )
+
+                    # SAVE
+
+                    if st.button(
+                        "💾 Sauvegarder",
+                        key=f"save_{c['id']}"
+                    ):
+
+                        update_config(
+                            c["id"],
+                            {
+                                "value": new_value,
+                                "extra": extra,
+                                "sort_order": new_sort,
+                                "active": active
+                            }
+                        )
+
+                        st.success("Sauvegardé")
+
+                        st.rerun()
+
+                    st.markdown(
+                        "</div>",
+                        unsafe_allow_html=True
+                    )
+
+        # =================================================
+        # MOMENTS INTENTS
+        # =================================================
+
+        with st.expander("🌇 Moments Intents", expanded=False):
+
+            moments = get_config_values("momentsIntents")
+
+            # ---------------------------------------------
+            # AJOUT
+            # ---------------------------------------------
+            with st.form("add_moment_intent"):
+
+                new_moment_intent = st.text_input("Nouveau moment intent")
+
+                submitted = st.form_submit_button(
+                    "➕ Ajouter"
+                )
+
+            if submitted and new_moment_intent:
+
+                add_config("momentsIntents", new_moment_intent)
+
+                st.success("Moment intent ajouté")
+
+                st.rerun()
+
+            # ---------------------------------------------
+            # LISTE
+            # ---------------------------------------------
+
+            for c in moments:
+
+                with st.container():
+
+                    st.markdown(
+                        """
+                        <div class="form-card">
+                        """,
+                        unsafe_allow_html=True
+                    )
+
+                    col1, col2, col3, col4 = st.columns([3,2,2,2])
+
+                    # VALUE
+
+                    new_value = col1.text_input(
+                        "Moment Intent",
+                        c["value"],
+                        key=f"value_{c['id']}"
+                    )
+
+                    # EXTRA
+                    extra = col2.text_input(
+                        "Moment",
+                        c.get("extra", ""),
+                        key=f"extra_{c['id']}", placeholder="Période"
+                    )
+
+                    # SORT
+
+                    new_sort = col3.number_input(
+                        "Ordre",
+                        value=c.get("sort_order", 0),
+                        step=1,
+                        key=f"sort_{c['id']}"
+                    )
+
+                    # ACTIVE
+
+                    active = col4.checkbox(
+                        "Active",
+                        value=c.get("active", True),
+                        key=f"active_{c['id']}"
+                    )
+
+                    # SAVE
+
+                    if st.button(
+                        "💾 Sauvegarder",
+                        key=f"save_{c['id']}"
+                    ):
+
+                        update_config(
+                            c["id"],
+                            {
+                                "value": new_value,
+                                "extra": extra,
+                                "sort_order": new_sort,
+                                "active": active
+                            }
+                        )
+
+                        st.success("Sauvegardé")
+
+                        st.rerun()
+
+                    st.markdown(
+                        "</div>",
+                        unsafe_allow_html=True
+                    )
+
+        # =================================================
+        # CONCEPTS
+        # =================================================
+
+        with st.expander("🎛️ Concepts", expanded=False):
+
+            concepts = get_config_values("concept")
+
+            # ---------------------------------------------
+            # AJOUT
+            # ---------------------------------------------
+            with st.form("add_concept"):
+
+                new_concept = st.text_input("Nouveau concept")
+
+                submitted = st.form_submit_button(
+                    "➕ Ajouter"
+                )
+
+            if submitted and new_concept:
+
+                add_config("concept", new_concept)
+
+                st.success("Concept ajouté")
+
+                st.rerun()
+
+            # ---------------------------------------------
+            # LISTE
+            # ---------------------------------------------
+
+            for c in concepts:
+
+                with st.container():
+
+                    st.markdown(
+                        """
+                        <div class="form-card">
+                        """,
+                        unsafe_allow_html=True
+                    )
+
+                    col1, col2, col3, col4 = st.columns([3,2,2,2])
+
+                    # VALUE
+
+                    new_value = col1.text_input(
+                        "Concept",
+                        c["value"],
+                        key=f"value_{c['id']}"
+                    )
+
+                    # EXTRA
+                    extra = col2.text_input(
+                        "Traduction",
+                        c.get("extra", ""),
+                        key=f"extra_{c['id']}", placeholder="Valeurs"
+                    )
+
+                    # SORT
+
+                    new_sort = col3.number_input(
+                        "Ordre",
+                        value=c.get("sort_order", 0),
+                        step=1,
+                        key=f"sort_{c['id']}"
+                    )
+
+                    # ACTIVE
+
+                    active = col4.checkbox(
+                        "Active",
+                        value=c.get("active", True),
+                        key=f"active_{c['id']}"
+                    )
+
+                    # SAVE
+
+                    if st.button(
+                        "💾 Sauvegarder",
+                        key=f"save_{c['id']}"
+                    ):
+
+                        update_config(
+                            c["id"],
+                            {
+                                "value": new_value,
+                                "extra": extra,
+                                "sort_order": new_sort,
+                                "active": active
+                            }
+                        )
+
+                        st.success("Sauvegardé")
+
+                        st.rerun()
+
+                    st.markdown(
+                        "</div>",
+                        unsafe_allow_html=True
+                    )
+
+        # =================================================
+        # FUZZY MATCHING
+        # =================================================
+
+        with st.expander("📝 Auto corrections", expanded=False):
+
+            fuzzyMatchings = get_config_values("fuzzyMatching")
+
+            # ---------------------------------------------
+            # AJOUT
+            # ---------------------------------------------
+            with st.form("add_fuzzyMatching"):
+
+                new_fuzzyMatching = st.text_input("Nouvelle auto correction")
+
+                submitted = st.form_submit_button(
+                    "➕ Ajouter"
+                )
+
+            if submitted and new_fuzzyMatching:
+
+                add_config("fuzzyMatching", new_fuzzyMatching)
+
+                st.success("Auto correction ajoutée")
+
+                st.rerun()
+
+            # ---------------------------------------------
+            # LISTE
+            # ---------------------------------------------
+
+            for c in fuzzyMatchings:
+
+                with st.container():
+
+                    st.markdown(
+                        """
+                        <div class="form-card">
+                        """,
+                        unsafe_allow_html=True
+                    )
+
+                    col1, col2, col3, col4 = st.columns([3,2,2,2])
+
+                    # VALUE
+
+                    new_value = col1.text_input(
+                        "Auto correction",
+                        c["value"],
+                        key=f"value_{c['id']}"
+                    )
+
+                    # EXTRA
+                    extra = col2.text_input(
+                        "Correction",
+                        c.get("extra", ""),
+                        key=f"extra_{c['id']}", placeholder="Valeurs"
+                    )
+
+                    # SORT
+
+                    new_sort = col3.number_input(
+                        "Ordre",
+                        value=c.get("sort_order", 0),
+                        step=1,
+                        key=f"sort_{c['id']}"
+                    )
+
+                    # ACTIVE
+
+                    active = col4.checkbox(
+                        "Active",
+                        value=c.get("active", True),
+                        key=f"active_{c['id']}"
+                    )
+
+                    # SAVE
+
+                    if st.button(
+                        "💾 Sauvegarder",
+                        key=f"save_{c['id']}"
+                    ):
+
+                        update_config(
+                            c["id"],
+                            {
+                                "value": new_value,
+                                "extra": extra,
+                                "sort_order": new_sort,
+                                "active": active
+                            }
+                        )
+
+                        st.success("Sauvegardé")
+
+                        st.rerun()
+
+                    st.markdown(
+                        "</div>",
+                        unsafe_allow_html=True
+                    )
