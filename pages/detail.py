@@ -218,14 +218,7 @@ def detail_screen():
             use_container_width=True
         ):
 
-            delete_tea(
-                tea_id,
-                user_id
-            )
-
-            st.session_state.page = "main"
-
-            st.rerun()
+            st.session_state.confirm_delete = True
 
     with col3:
 
@@ -237,3 +230,41 @@ def detail_screen():
             st.session_state.page = "main"
 
             st.rerun()
+
+    if st.session_state.get("confirm_delete"):
+
+        st.warning(
+            f"⚠️ Supprimer définitivement "
+            f"'{tea.get('name')}' ?"
+        )
+
+        col1, col2 = st.columns(2)
+
+        with col1:
+
+            if st.button(
+                "✅ Oui supprimer",
+                use_container_width=True
+            ):
+
+                delete_tea(
+                    tea_id,
+                    user_id
+                )
+
+                st.session_state.confirm_delete = False
+
+                st.session_state.page = "main"
+
+                st.rerun()
+
+        with col2:
+
+            if st.button(
+                "❌ Annuler",
+                use_container_width=True
+            ):
+
+                st.session_state.confirm_delete = False
+
+                st.rerun()

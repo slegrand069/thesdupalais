@@ -17,6 +17,15 @@ import random
 
 from tea_card_component import tea_card
 
+examples = [
+
+    "🧠 thé relaxant japonais",
+    "🧠 thé gourmand 5 étoiles",
+    "🧠 thé énergisant matin",
+    "🧠 infusion douce soir",
+    "🧠 thé chinois corsé",
+]
+
 
 def main_screen():
 
@@ -43,6 +52,26 @@ def main_screen():
         "🧠 Dites moi simplement ce que vous recherchez..."
     )
 
+    with st.expander("🧠 Aide recherche intelligente"):
+
+        st.markdown("""
+### Vous pouvez rechercher :
+
+- une origine
+- un moment
+- une sensation
+- une note minimale
+- une ambiance
+
+### Exemples
+
+- thé relaxant japonais
+- thé du matin
+- thé 5 étoiles
+- infusion digestive
+- thé gourmand fruité
+
+""")
     search = col1.text_input(
         "",
         placeholder=placeholder
