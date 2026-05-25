@@ -1,0 +1,18 @@
+{
+  "bgBorder": "#66A066",
+  "bgCenter": "#B0E0D0",
+  "card": "rgba(255,255,255,0.92)",
+  "button": "#E8F5E9",
+  "text": "#222222",
+  "teacCardColors": {
+    "green": "#E8F5E9",
+    "oolong": "#FFF3E0",
+    "black": "#EFEBE9", 
+    "white": "#E3F2FD",
+    "mixed": "#F3E5F5",
+    "maté": "#E0F7FA",
+    "infusion": "#FCE4EC",
+    "pu-erh": "#FBE9E7",
+    "default": "#E8F5E9"
+    }
+}

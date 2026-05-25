@@ -3,7 +3,18 @@ from models import (
     get_config_values
 )
 from util import normalize_text, safe_split
+import json
 
+COLOR_LABELS = {
+    "green": "🍃 Vert",
+    "black": "🖤 Noir",
+    "white": "🤍 Blanc",
+    "oolong": "🟠 Oolong",
+    "pu-erh": "🟤 Pu'erh",
+    "mixed": "🌈 Mixte",
+    "infusion": "🌸 Infusion",
+    "mate": "🧉 Maté"
+}
 
 # =====================================================
 # GENERIC
@@ -46,6 +57,27 @@ def get_color_hex(color):
     ).get(
         "extra",
         "#FFFFFF"
+    )
+
+#Colors from theme for tea cards
+def get_theme_tea_color(
+    theme,
+    tea_color
+):
+
+    tea_colors = theme.get(
+        "teaCardColors",
+        {}
+    )
+
+    key = str(tea_color or "")
+    
+    return tea_colors.get(
+        key,
+        tea_colors.get(
+            "default",
+            "#E8F5E9"
+        )
     )
 
 
@@ -198,6 +230,32 @@ def get_fuzzy_matchings():
         words = safe_split(extra)
 
         result[value] = words
+
+    return result
+
+# =====================================================
+# THEMES
+# =====================================================
+
+def get_themes():
+
+    rows = get_config_values("theme")
+
+    result = {}
+
+    for r in rows:
+
+        value = r["value"]
+
+        extra = r.get("extra") or "{}"
+
+        try:
+
+            result[value] = json.loads(extra)
+
+        except:
+
+            result[value] = {}
 
     return result
 

@@ -113,3 +113,27 @@ def get_config_dict(config_type):
         r["value"]: r
         for r in rows
     }
+
+def update_config_extra(config_id, extra):
+
+    supabase.table("app_config") \
+        .update({
+            "extra": extra
+        }) \
+        .eq("id", config_id) \
+        .execute()
+    
+def get_config_row(config_type, value):
+
+    result = supabase.table("app_config") \
+        .select("*") \
+        .eq("type", config_type) \
+        .eq("value", value) \
+        .limit(1) \
+        .execute()
+
+    if result.data:
+
+        return result.data[0]
+
+    return None

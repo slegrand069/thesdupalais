@@ -6,7 +6,7 @@ from models import (
 )
 
 from config import (
-    get_color_names,
+    COLOR_LABELS,
     get_keywords,
     get_badges,
     get_moments,
@@ -58,16 +58,24 @@ def edit_screen():
                 val("origin")
             )
 
-            color_names = get_color_names()
+            color_keys = list(COLOR_LABELS.keys())
 
-            color = st.selectbox(
+            selected_color = st.selectbox(
+
                 "Couleur",
-                color_names,
-                index=color_names.index(val("color"))
-                if val("color") in color_names
+
+                color_keys,
+
+                format_func=lambda x:
+                    COLOR_LABELS.get(x, x),
+
+                index=color_keys.index(
+                    val("color")
+                )
+                if val("color") in color_keys
                 else 0
             )
-                
+
             selected_badges = st.multiselect(
                 "🏅 Badges",
                 get_badges(),
@@ -229,7 +237,7 @@ def edit_screen():
         data = (
             name,
             origin,
-            color,
+            color_selected,
             description,
             aromas,
             smell,

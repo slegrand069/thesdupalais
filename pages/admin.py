@@ -40,7 +40,7 @@ def admin_screen():
                     "➕ Ajouter"
                 )
 
-            if submitted and new_color:
+            if submitted and new_color and st.session_state.admin:
 
                 add_config("color", new_color)
 
@@ -140,7 +140,7 @@ def admin_screen():
                     if st.button(
                         "💾 Sauvegarder",
                         key=f"save_{c['id']}"
-                    ):
+                    ) and st.session_state.admin:
 
                         update_config(
                             c["id"],
@@ -180,7 +180,7 @@ def admin_screen():
                     "➕ Ajouter"
                 )
 
-            if submitted and new_badge:
+            if submitted and new_badge and st.session_state.admin:
 
                 add_config("badge", new_badge)
 
@@ -235,7 +235,7 @@ def admin_screen():
                     if st.button(
                         "💾 Sauvegarder",
                         key=f"save_{c['id']}"
-                    ):
+                    ) and st.session_state.admin:
 
                         update_config(
                             c["id"],
@@ -274,7 +274,7 @@ def admin_screen():
                     "➕ Ajouter"
                 )
 
-            if submitted and new_keyword:
+            if submitted and new_keyword and st.session_state.admin:
 
                 add_config("profilAromatique", new_keyword)
 
@@ -329,7 +329,7 @@ def admin_screen():
                     if st.button(
                         "💾 Sauvegarder",
                         key=f"save_{c['id']}"
-                    ):
+                    ) and st.session_state.admin:
 
                         update_config(
                             c["id"],
@@ -368,7 +368,7 @@ def admin_screen():
                     "➕ Ajouter"
                 )
 
-            if submitted and new_moment:
+            if submitted and new_moment and st.session_state.admin:
 
                 add_config("moment", new_moment)
 
@@ -423,7 +423,7 @@ def admin_screen():
                     if st.button(
                         "💾 Sauvegarder",
                         key=f"save_{c['id']}"
-                    ):
+                    ) and st.session_state.admin:
 
                         update_config(
                             c["id"],
@@ -462,7 +462,7 @@ def admin_screen():
                     "➕ Ajouter"
                 )
 
-            if submitted and new_container:
+            if submitted and new_container and st.session_state.admin:
 
                 add_config("contenant", new_container)
 
@@ -517,7 +517,7 @@ def admin_screen():
                     if st.button(
                         "💾 Sauvegarder",
                         key=f"save_{c['id']}"
-                    ):
+                    ) and st.session_state.admin:
 
                         update_config(
                             c["id"],
@@ -556,7 +556,7 @@ def admin_screen():
                     "➕ Ajouter"
                 )
 
-            if submitted and new_status:
+            if submitted and new_status and st.session_state.admin:
 
                 add_config("status", new_status)
 
@@ -651,7 +651,7 @@ def admin_screen():
                     "➕ Ajouter"
                 )
 
-            if submitted and new_synonym:
+            if submitted and new_synonym and st.session_state.admin:
 
                 add_config("synonym", new_synonym)
 
@@ -713,7 +713,7 @@ def admin_screen():
                     if st.button(
                         "💾 Sauvegarder",
                         key=f"save_{c['id']}"
-                    ):
+                    ) and st.session_state.admin:
 
                         update_config(
                             c["id"],
@@ -754,7 +754,7 @@ def admin_screen():
                     "➕ Ajouter"
                 )
 
-            if submitted and new_nationality:
+            if submitted and new_nationality and st.session_state.admin:
 
                 add_config("nationality", new_nationality)
 
@@ -856,7 +856,7 @@ def admin_screen():
                     "➕ Ajouter"
                 )
 
-            if submitted and new_moment_intent:
+            if submitted and new_moment_intent and st.session_state.admin:
 
                 add_config("momentsIntents", new_moment_intent)
 
@@ -918,7 +918,7 @@ def admin_screen():
                     if st.button(
                         "💾 Sauvegarder",
                         key=f"save_{c['id']}"
-                    ):
+                    ) and st.session_state.admin:
 
                         update_config(
                             c["id"],
@@ -958,7 +958,7 @@ def admin_screen():
                     "➕ Ajouter"
                 )
 
-            if submitted and new_concept:
+            if submitted and new_concept and st.session_state.admin:
 
                 add_config("concept", new_concept)
 
@@ -1020,7 +1020,7 @@ def admin_screen():
                     if st.button(
                         "💾 Sauvegarder",
                         key=f"save_{c['id']}"
-                    ):
+                    ) and st.session_state.admin:
 
                         update_config(
                             c["id"],
@@ -1060,7 +1060,7 @@ def admin_screen():
                     "➕ Ajouter"
                 )
 
-            if submitted and new_fuzzyMatching:
+            if submitted and new_fuzzyMatching and st.session_state.admin:
 
                 add_config("fuzzyMatching", new_fuzzyMatching)
 
@@ -1122,7 +1122,7 @@ def admin_screen():
                     if st.button(
                         "💾 Sauvegarder",
                         key=f"save_{c['id']}"
-                    ):
+                    ) and st.session_state.admin:
 
                         update_config(
                             c["id"],

@@ -9,13 +9,14 @@ from nlp import (
 )
 
 from config import (
-    get_color_hex
+    get_themes, get_theme_tea_color, COLOR_LABELS
 )
 
 import streamlit as st
 import random
 
 from tea_card_component import tea_card
+from util import normalize_text
 
 examples = [
 
@@ -31,7 +32,28 @@ def main_screen():
 
     user_id = st.session_state.user.id
 
+    THEMES = get_themes()
+
+    theme = THEMES.get(
+        st.session_state.theme,
+        {}
+    )
+
     st.markdown("## 🍵 Mes thés")
+
+    with st.expander("🎨 Theme"):
+
+        selected_theme = st.selectbox(
+            "Choisir votre thème",
+            THEMES.keys(),
+            index=list(THEMES.keys()).index(st.session_state.theme)
+        )
+
+    if selected_theme != st.session_state.theme:
+
+        st.session_state.theme = selected_theme
+        st.rerun()
+
 
     # =================================================
     # SEARCH
@@ -77,11 +99,20 @@ def main_screen():
         placeholder=placeholder
     )
 
-    if search.strip().lower() == "/admin":
-
+    if search.strip().lower() == "/config":
+        st.session_state.admin = False
         st.session_state.page = "admin"
-
         st.rerun()
+    elif search.strip().lower() == "/config /admin":
+        st.session_state.admin = True
+        st.session_state.page = "admin"
+        st.rerun()
+    elif search.strip().lower() in ["/config /themes"]:
+        st.session_state.admin = False
+        st.session_state.page = "theme_editor"
+        st.rerun()
+    else:
+        st.session_state.admin = False
 
 
     # =================================================
@@ -173,9 +204,14 @@ def main_screen():
     # CARDS
     # =================================================
 
+    theme = st.session_state.current_theme
+
     for t in teas:
 
-        bg = get_color_hex(t["color"])
+        bg = get_theme_tea_color(
+            theme,
+            t.get("color", "default")
+        )        
 
         badges = [
 
@@ -194,7 +230,7 @@ def main_screen():
 
                 "id": int(t["id"]),
                 "name": str(t["name"]),
-                "color": t["color"],
+                "color": COLOR_LABELS.get(t.get("color"), t.get("color")),
                 "origin": t["origin"],
                 "rating": t["taste_rating"],
                 "temp": t["temperature"],

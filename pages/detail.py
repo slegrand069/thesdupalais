@@ -6,8 +6,11 @@ from models import (
 )
 
 from config import (
-    get_color_hex
+    COLOR_LABELS,
+    get_color_hex,
+    get_theme_tea_color
 )
+from util import normalize_text
 
 
 def detail_screen():
@@ -30,10 +33,16 @@ def detail_screen():
     # =================================================
     # DATA
     # =================================================
-
-    bg = get_color_hex(
+    theme = st.session_state.current_theme
+    color_name = COLOR_LABELS.get(
+        tea.get("color"),
         tea.get("color")
-    )
+    )    
+
+    bg = get_theme_tea_color(
+        theme,
+        tea.get("color")
+        )
 
     badges = [
 
@@ -66,7 +75,7 @@ def detail_screen():
 <div class="detail-title">
 🍵 {tea.get("name", "")}</div>
 <div class="detail-subtitle">
-{tea.get("color", "")}•{tea.get("origin", "")}</div>
+{color_name}•{tea.get("origin", "")}</div>
 </div>
     """, unsafe_allow_html=True)
 

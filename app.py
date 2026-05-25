@@ -1,80 +1,82 @@
-import streamlit as st
-from streamlit_js_eval import streamlit_js_eval
 import json
-from pages.admin import admin_screen
-from pages.main import main_screen
-from pages.edit import edit_screen
-from pages.detail import detail_screen  
+
+import streamlit as st
+
+from streamlit_js_eval import streamlit_js_eval
+
 from models import supabase
 
-# Supabase THD3w!nt3Res26!
+from config import get_themes
 
-# 🔥 DOIT ÊTRE EN TOUT PREMIER
+from ui import inject_css
+
+from pages.main import main_screen
+from pages.edit import edit_screen
+from pages.detail import detail_screen
+from pages.admin import admin_screen
+from pages.theme_editor import theme_editor_screen
+
+
+# =====================================================
+# PAGE CONFIG
+# =====================================================
+
 st.set_page_config(
     page_title="Thés du Palais",
     page_icon="🍵",
     layout="centered",
     initial_sidebar_state="collapsed"
 )
+
+
+# =====================================================
+# SESSION STATE INIT
+# =====================================================
+
+DEFAULT_SESSION = {
+
+    "page": "main",
+
+    "selected_tea": None,
+
+    "edit_id": None,
+
+    "theme": "Light"
+}
+
+for key, value in DEFAULT_SESSION.items():
+
+    if key not in st.session_state:
+
+        st.session_state[key] = value
+
+
+# =====================================================
+# LOAD LOCAL STORAGE SESSION
+# =====================================================
+
 session_data = streamlit_js_eval(
-    js_expressions="localStorage.getItem('supabase_session')",
+    js_expressions="""
+        localStorage.getItem(
+            'supabase_session'
+        )
+    """,
     key="get_session"
 )
 
-# ---------------- LOGIN ----------------
-def login_screen():
 
-    st.title("🔐 Connexion")
+# =====================================================
+# RESTORE SESSION
+# =====================================================
 
-    email = st.text_input("Email")
-    password = st.text_input("Mot de passe", type="password")
+if (
+    session_data
+    and session_data != "null"
+    and "user" not in st.session_state
+):
 
-    col1, col2= st.columns(2, gap="small")
-    col3, _ = st.columns([1,4], gap="small")
-
-    # 🔓 LOGIN
-    if col1.button("🔓 Connexion"):
-        res = supabase.auth.sign_in_with_password({
-            "email": email,
-            "password": password
-        })
-
-        if res and res.user:
-            st.session_state.user = res.user
-            st.session_state.session = res.session
-            
-            # 🔥 stocker dans navigateur
-            streamlit_js_eval(js_expressions=f"""
-                localStorage.setItem("supabase_session", JSON.stringify({{
-                access_token: "{res.session.access_token}",
-                refresh_token: "{res.session.refresh_token}"
-                }}))
-            """)
-            st.rerun()
-        else:
-            st.error("Email ou mot de passe incorrect")
-
-    # 🆕 SIGNUP
-    if col2.button("🆕 Créer un compte"):
-        res = supabase.auth.sign_up({
-            "email": email,
-            "password": password
-        })
-
-        if res and res.user:
-            st.success("Compte créé 🎉")
-        else:
-            st.error("Erreur création compte")
-
-    # 🚪 LOGOUT
-    if col3.button("🚪 Déconnexion"):
-        supabase.auth.sign_out()
-        streamlit_js_eval(js_expressions="localStorage.removeItem('supabase_session')")
-        st.session_state.clear()
-        st.rerun()
-
-if session_data and session_data != "null" and "session" not in st.session_state:
     try:
+
         s = json.loads(session_data)
 
         supabase.auth.set_session(
@@ -85,347 +87,254 @@ if session_data and session_data != "null" and "session" not in st.session_state
         user = supabase.auth.get_user()
 
         st.session_state.user = user.user
+
         st.session_state.session = s
 
-    except Exception as e:
-        st.write("Session restore error:", e)
+    except Exception:
+
+        # clear broken session
+        streamlit_js_eval(
+            js_expressions="""
+                localStorage.removeItem(
+                    'supabase_session'
+                )
+            """,
+            key="clear_bad_session"
+        )
+
+        st.session_state.pop(
+            "user",
+            None
+        )
+
+        st.session_state.pop(
+            "session",
+            None
+        )
+
+
+# =====================================================
+# LOGIN SCREEN
+# =====================================================
+
+def login_screen():
+
+    st.title("🔐 Connexion")
+
+    email = st.text_input("Email")
+
+    password = st.text_input(
+        "Mot de passe",
+        type="password"
+    )
+
+    col1, col2 = st.columns(2)
+
+    # =================================================
+    # LOGIN
+    # =================================================
+
+    if col1.button(
+        "🔓 Connexion",
+        use_container_width=True
+    ):
+
+        try:
+
+            res = supabase.auth.sign_in_with_password({
+
+                "email": email,
+
+                "password": password
+            })
+
+            if res and res.user:
+
+                st.session_state.user = res.user
+
+                st.session_state.session = {
+
+                    "access_token":
+                        res.session.access_token,
+
+                    "refresh_token":
+                        res.session.refresh_token
+                }
+
+                # save browser session
+                streamlit_js_eval(
+                    js_expressions=f"""
+                        localStorage.setItem(
+                            'supabase_session',
+
+                            JSON.stringify({{
+                                access_token:
+                                    "{res.session.access_token}",
+
+                                refresh_token:
+                                    "{res.session.refresh_token}"
+                            }})
+                        )
+                    """,
+                    key="save_session"
+                )
+
+                st.rerun()
+
+            else:
+
+                st.error(
+                    "Email ou mot de passe incorrect"
+                )
+
+        except Exception as e:
+
+            st.error(
+                f"Erreur connexion : {e}"
+            )
+
+    # =================================================
+    # SIGNUP
+    # =================================================
+
+    if col2.button(
+        "🆕 Créer un compte",
+        use_container_width=True
+    ):
+
+        try:
+
+            res = supabase.auth.sign_up({
+
+                "email": email,
+
+                "password": password
+            })
+
+            if res and res.user:
+
+                st.success(
+                    "Compte créé 🎉"
+                )
+
+            else:
+
+                st.error(
+                    "Erreur création compte"
+                )
+
+        except Exception as e:
+
+            st.error(
+                f"Erreur création : {e}"
+            )
+
+
+# =====================================================
+# AUTH CHECK
+# =====================================================
 
 if "user" not in st.session_state:
+
     login_screen()
+
     st.stop()
 
-        
-# ---------------- DATABASE ----------------
 
-url = "https://ptcsqnskkybxmnsdsdxg.supabase.co"
-# anon public
-key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB0Y3NxbnNra3lieG1uc2RzZHhnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc2Nzc4MzYsImV4cCI6MjA5MzI1MzgzNn0.jcwmddYOVL2DNNPCUEjb3c3l3RWUTLTzagtLDqbTpvw"
+# =====================================================
+# LOAD THEMES
+# =====================================================
 
-# ---------------- APP ----------------
+themes = get_themes()
 
-col1, col2 = st.columns([6,2], gap="small")
+theme = themes.get(
+    st.session_state.theme,
+    themes.get("Light", {})
+)
+st.session_state.current_theme = theme
+
+
+# =====================================================
+# CSS
+# =====================================================
+
+inject_css(theme)
+
+
+# =====================================================
+# HEADER
+# =====================================================
+
+col1, col2 = st.columns([6,2])
+
 with col1:
+
     st.title("🍵 Thés du Palais")
-    st.write("Gérez votre collection de thés, notez-les et retrouvez-les facilement !")
+
+    st.markdown(f"""
+    <div style="
+        color:{theme.get('subtleText')};
+        opacity:0.9;
+        margin-top:-8px;
+    ">
+        Gérez votre collection de thés,
+        notez-les et retrouvez-les facilement !
+    </div>
+    """, unsafe_allow_html=True)
 
 with col2:
-    if st.button("🚪Déconnexion", help="Déconnexion"):
-        supabase.auth.sign_out()
-        streamlit_js_eval(js_expressions="localStorage.removeItem('supabase_session')")
+
+    st.markdown("<br>", unsafe_allow_html=True)
+
+    if st.button(
+        "🚪 Déconnexion",
+        use_container_width=True
+    ):
+
+        try:
+
+            supabase.auth.sign_out()
+
+        except:
+            pass
+
+        streamlit_js_eval(
+            js_expressions="""
+                localStorage.removeItem(
+                    'supabase_session'
+                )
+            """,
+            key="logout"
+        )
+
         st.session_state.clear()
+
         st.rerun()
-st.markdown("""
-<style>
-div.stButton > button {
-    border-radius: 14px;
-    font-size: 14px;
-    padding: 16px;
-    use_container_width: true;
-    border: 1px solid rgba(0,0,0,0.05);
-            margin-top: 10px;
-}
-</style>
-""", unsafe_allow_html=True)            
 
-st.markdown("""
-<style>
 
-/* ======================================================
-   GLOBAL
-====================================================== */
+# =====================================================
+# ROUTER
+# =====================================================
 
-html, body, [class*="css"] {
-    font-size: 14px;
-}
+page = st.session_state.page
 
-/* ======================================================
-   APP BACKGROUND
-====================================================== */
 
-.stApp {
-    background: linear-gradient(
-        90deg,
-        #66A066 0%,
-        #B0E0D0 50%,
-        #66A066 100%
-    );
+if page == "main":
 
-    background-attachment: fixed;
-}
-
-/* ======================================================
-   STREAMLIT CLEANUP
-====================================================== */
-
-/* Header blanc du haut */
-header[data-testid="stHeader"] {
-    display: none;
-}
-
-/* Toolbar dev */
-div[data-testid="stToolbar"] {
-    display: none;
-}
-
-/* Menu hamburger */
-#MainMenu {
-    display: none;
-}
-
-/* Footer */
-footer {
-    display: none;
-}
-
-/* Sidebar */
-section[data-testid="stSidebar"] {
-    display: none;
-}
-
-/* Bouton collapse sidebar */
-[data-testid="collapsedControl"] {
-    display: none;
-}
-
-/* Réduit espace top */
-.block-container {
-    padding-top: 1.5rem;
-    padding-bottom: 1rem;
-}
-            
-[data-testid="stDecoration"] {
-    display: none;
-}
-
-[data-testid="stAppViewContainer"] > .main {
-    padding-top: 0rem;
-}
-
-/* ======================================================
-   IMPROVE DETAILS STYLE
-====================================================== */
-                        
-details {
-    background: rgba(255,255,255,0.18);
-    backdrop-filter: blur(4px);
-
-    border-radius: 16px;
-
-    padding: 2px 8px;
-
-    margin-bottom: 0.5rem !important;
-}
-
-summary {
-    font-weight: 600;
-}
-
-div[data-testid="stVerticalBlock"] > div:has(> div[data-testid="stExpander"]) {
-    margin-bottom: 0.4rem !important;
-}
-
-div[data-testid="stExpander"] {
-    margin-bottom: 0rem !important;
-}
-            
-details[open] {
-    background: rgba(255,255,255,0.28);
-}
-            
-.detail-hero {
-
-    padding: 22px;
-
-    border-radius: 22px;
-
-    margin-bottom: 12px;
-
-    box-shadow:
-        0 6px 18px rgba(0,0,0,0.08);
-}
-
-.detail-title {
-
-    font-size: 28px;
-
-    font-weight: 700;
-
-    margin-bottom: 8px;
-}
-
-.detail-subtitle {
-
-    opacity: 0.8;
-
-    font-size: 15px;
-}
-
-/* ======================================================
-   TITRES
-====================================================== */
-
-h1 {
-    font-size: 24px !important;
-}
-
-h2 {
-    font-size: 20px !important;
-}
-
-h3 {
-    font-size: 16px !important;
-}
-
-/* ======================================================
-   CARDS
-====================================================== */
-
-.card {
-    padding: 12px;
-    border-radius: 14px;
-    margin-bottom: 10px;
-
-    border: 1px solid rgba(0,0,0,0.05);
-
-    box-shadow:
-        0 4px 12px rgba(0,0,0,0.08);
-}
-
-/* ======================================================
-   SECTION TITLES
-====================================================== */
-
-.section-title {
-    font-size: 18px;
-    font-weight: 600;
-
-    margin-bottom: 10px;
-}
-
-/* ======================================================
-   BUTTONS
-====================================================== */
-
-.stButton > button {
-
-    text-align: left !important;
-
-    padding: 12px 16px;
-
-    border-radius: 14px;
-
-    border: 1px solid rgba(0,0,0,0.05);
-
-    box-shadow:
-        0 4px 12px rgba(0,0,0,0.08);
-
-    background-color: #E8F5E9;
-
-    font-size: 14px;
-
-    line-height: 1.4;
-
-    transition: all 0.15s ease;
-}
-
-.stButton > button:hover {
-
-    transform: translateY(-1px);
-
-    box-shadow:
-        0 6px 16px rgba(0,0,0,0.12);
-}
-
-/* ======================================================
-   INPUTS
-====================================================== */
-
-.stTextInput input {
-    border-radius: 12px !important;
-    font-size: 13px;
-}
-
-textarea {
-    border-radius: 12px !important;
-}
-            
-input[type="color"] {
-    cursor: pointer;
-}
-
-/* ======================================================
-   SELECTBOX
-====================================================== */
-
-.stSelectbox div[data-baseweb="select"] {
-    border-radius: 12px !important;
-}
-
-/* ======================================================
-   SLIDERS
-====================================================== */
-
-.stSlider {
-    padding-top: 4px;
-}
-
-/* ======================================================
-   BADGES
-====================================================== */
-
-.badge {
-
-    background: #f0f0f0;
-
-    padding: 3px 8px;
-
-    border-radius: 8px;
-
-    font-size: 11px;
-
-    margin-right: 4px;
-}
-
-/* ======================================================
-   ACTION BAR
-====================================================== */
-
-.action-bar {
-
-    margin-top: 8px;
-
-    padding-top: 6px;
-
-    padding-bottom: 2px;
-}
-
-</style>
-""", unsafe_allow_html=True)
-
-if "user" not in st.session_state:
-    login_screen()
-    st.stop()
-
-user_id = st.session_state.user.id
-
-if "page" not in st.session_state:
-    st.session_state.page = "main"
-
-if "selected_tea" not in st.session_state:
-    st.session_state.selected_tea = None
-
-if "edit_id" not in st.session_state:
-    st.session_state.edit_id = None
-
-# ---------------- ROUTER ----------------
-if st.session_state.page == "main":
     main_screen()
 
-elif st.session_state.page == "edit":
+elif page == "edit":
+
     edit_screen()
 
-elif st.session_state.page == "detail":
+elif page == "detail":
+
     detail_screen()
 
-elif st.session_state.page == "admin":
+elif page == "admin":
+
     admin_screen()
+
+elif page == "theme_editor":
+
+    theme_editor_screen()
